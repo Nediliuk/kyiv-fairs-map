@@ -39,7 +39,7 @@ export function renderLayers(map, features) {
     },
     filter: ['==', ['get', 'type'], 'zone']
   }, insertBefore);
-  
+
   map.addLayer({
     id: 'fair-points',
     type: 'circle',
@@ -54,25 +54,43 @@ export function renderLayers(map, features) {
   setupWeekdayFilter(map);
 
   map.once('idle', () => {
-    map.on('click', 'fair-points', (e) => {
-      const feature = e.features[0];
+    let activePopup;
+
+    const createPopupAt = (feature, lngLat) => {
       const props = feature.properties;
 
-      new mapboxgl.Popup()
-        .setLngLat(feature.geometry.coordinates)
+      if (activePopup) activePopup.remove();
+
+      activePopup = new mapboxgl.Popup({
+        offset: 16,
+        closeButton: false,
+      })
+        .setLngLat(lngLat)
         .setHTML(`
-          <strong>${props.address}</strong><br/>
-          Дата: ${props.date_release}<br/>
-          День тижня: ${props.weekday}
+          <div class="popup-address">${props.address}</div>
+          <div class="popup-details">
+            <span class="popup-weekday">${props.weekday}</span>
+          </div>
         `)
         .addTo(map);
+    };
+
+    map.on('click', 'fair-points', (e) => {
+      const feature = e.features[0];
+      createPopupAt(feature, feature.geometry.coordinates);
     });
 
-    map.on('mouseenter', 'fair-points', () => {
-      map.getCanvas().style.cursor = 'pointer';
+    map.on('click', 'fair-polygons', (e) => {
+      const feature = e.features[0];
+      createPopupAt(feature, e.lngLat); // Показати попап під курсором
     });
-    map.on('mouseleave', 'fair-points', () => {
-      map.getCanvas().style.cursor = '';
-    });
+  });
+
+  map.on('mouseenter', 'fair-points', () => {
+    map.getCanvas().style.cursor = 'pointer';
+  });
+
+  map.on('mouseleave', 'fair-points', () => {
+    map.getCanvas().style.cursor = '';
   });
 }

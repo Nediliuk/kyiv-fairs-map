@@ -1,62 +1,138 @@
+@font-face {
+  font-family: 'e-Ukraine';
+  src: url('./fonts/e-Ukraine-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'e-Ukraine';
+  src: url('./fonts/e-Ukraine-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'e-Ukraine';
+  src: url('./fonts/e-Ukraine-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'e-Ukraine';
+  src: url('./fonts/e-UkraineHead-LOGO.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+}
+
+body {
+  font-family: 'e-Ukraine', sans-serif;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
 /* === Загальний контейнер === */
 .fair-ui {
     position: absolute;
     top: 24px;
     left: 24px;
     z-index: 10;
-    font-family: sans-serif;
   }
   
   /* === Логотип === */
   .fair-logo {
-    font-weight: 800;
+    font-weight: 500;
     font-size: 28px;
     padding: 10px 24px;
     background: white;
     border-radius: 12px;
     margin-bottom: 12px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    color: #111827;
+    color: #0A1543;
   }
   
   /* === Панель кнопок === */
   .weekday-panel {
     background: white;
     border-radius: 16px;
-    padding: 10px;
+    padding: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
+    font-size: 15px;
+    font-weight: 300;
+
   }
   
   /* === Кнопка "Сьогодні" === */
   .weekday-today {
-    font-weight: 600;
     padding: 8px 12px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    background: #f3f4f6;
-    font-size: 16px;
+    background: #fff;
+    font-size: 14px;
   }
   
   /* === Звичайна кнопка дня === */
   .weekday-button {
-    padding: 8px 12px;
+    padding: 12px 16px;
     border-radius: 8px;
     border: none;
     text-align: left;
     cursor: pointer;
     background: #fff;
-    font-size: 16px;
-    font-weight: 500;
     color: #1A244D;
-    transition: background 0.2s;
+    transition: background 0.5s;
   }
   
+  /* === Попап === */
+  .mapboxgl-popup {
+    max-width: 420px !important;
+    font-family: 'e-Ukraine', sans-serif;
+    font-size: 14px;
+  }
+
+  .popup-address {
+    font-weight: 400;
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #1A244D;;
+  }
+  
+  .popup-details {
+    font-weight: 300;
+    font-size: 14px;
+    color: #1A244D70;
+
+  }
+  
+  .popup-date,
+  .popup-weekday {
+    display: block;
+  }
+  
+  .mapboxgl-popup .mapboxgl-popup-content {
+    background: rgb(255, 255, 255);
+    border-radius: 16px;
+    padding: 12px 20px 16px 20px;;
+    box-shadow: 0 2px 10px hsla(228, 100%, 10%, 0.2);
+    pointer-events: auto;
+    overscroll-behavior: none; 
+
+  }
+  
+  .mapboxgl-popup-tip {
+    border-top-color: white;
+  }
+
+  /* === Стани кнопок === */
   .weekday-button:hover:not(.disabled) {
-    background: #F2EB3C;
+    background: #F2F2F3;
     color: #1A244D;
   }
   
