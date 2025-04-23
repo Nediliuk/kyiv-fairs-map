@@ -1,0 +1,72 @@
+/* === Загальний контейнер === */
+.fair-ui {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    z-index: 10;
+    font-family: sans-serif;
+  }
+  
+  /* === Логотип === */
+  .fair-logo {
+    font-weight: 800;
+    font-size: 28px;
+    padding: 10px 24px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    color: #111827;
+  }
+  
+  /* === Панель кнопок === */
+  .weekday-panel {
+    background: white;
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  /* === Кнопка "Сьогодні" === */
+  .weekday-today {
+    font-weight: 600;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #f3f4f6;
+    font-size: 16px;
+  }
+  
+  /* === Звичайна кнопка дня === */
+  .weekday-button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    background: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    color: #1A244D;
+    transition: background 0.2s;
+  }
+  
+  .weekday-button:hover:not(.disabled) {
+    background: #F2EB3C;
+    color: #1A244D;
+  }
+  
+  .weekday-button.active {
+    background: #0033FF;
+    color: #fff;
+  }
+  
+  .weekday-button.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  

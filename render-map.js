@@ -1,7 +1,7 @@
 // === render-map.js ===
 // Візуалізація шарів і попапів для ярмарків і зон
 
-import mapboxgl from 'https://cdn.skypack.dev/mapbox-gl';
+import * as mapboxgl from 'https://cdn.skypack.dev/mapbox-gl';
 import { setupWeekdayFilter } from './weekday-filter.js';
 
 export function renderLayers(map, features) {
@@ -13,43 +13,46 @@ export function renderLayers(map, features) {
     },
   });
 
+  // Знаходимо шар 3D-будинків
+  const buildingLayer = map.getStyle().layers.find(l => l.id === 'building-extrusion');
+  const insertBefore = buildingLayer?.id;
+
   map.addLayer({
     id: 'fair-polygons',
     type: 'fill',
     source: 'fairs',
     paint: {
-      'fill-color': '#ffa500',
-      'fill-opacity': 0.2,
+      'fill-color': '#F2EB3C',
+      'fill-opacity': 0.15,
     },
-    filter: ['all', ['==', ['get', 'type'], 'polygon']],
-  });
+    filter: ['==', ['get', 'type'], 'polygon'],
+  }, insertBefore);
 
+  map.addLayer({
+    id: 'zone-polygons',
+    type: 'fill-extrusion',
+    source: 'fairs',
+    paint: {
+      'fill-extrusion-color': '#0033FF',
+      'fill-extrusion-height': 2.3,
+      'fill-extrusion-base': 0,
+    },
+    filter: ['==', ['get', 'type'], 'zone']
+  }, insertBefore);
+  
   map.addLayer({
     id: 'fair-points',
     type: 'circle',
     source: 'fairs',
     paint: {
       'circle-radius': 6,
-      'circle-color': '#ffa500',
+      'circle-color': '#0033FF',
     },
-    filter: ['all', ['==', ['get', 'type'], 'point']],
+    filter: ['==', ['get', 'type'], 'point'],
   });
 
-  map.addLayer({
-    id: 'zone-polygons',
-    type: 'fill',
-    source: 'fairs',
-    paint: {
-      'fill-color': '#4CAF50',
-      'fill-opacity': 0.15,
-    },
-    filter: ['==', ['get', 'type'], 'zone'],
-  });
-
-  // Ініціалізація фільтра по днях тижня
   setupWeekdayFilter(map);
 
-  // Попапи й курсор
   map.once('idle', () => {
     map.on('click', 'fair-points', (e) => {
       const feature = e.features[0];
