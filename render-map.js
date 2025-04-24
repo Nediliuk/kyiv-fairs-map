@@ -54,6 +54,11 @@ export function renderLayers(map, features) {
   setupWeekdayFilter(map);
 
   map.once('idle', () => {
+    // Прибираємо лоадер для карти
+    const loader = document.getElementById('map-loader');
+    if (loader) loader.style.display = 'none';
+    document.body.classList.add('map-ready');
+    
     let activePopup;
 
     const createPopupAt = (feature, lngLat) => {

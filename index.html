@@ -9,7 +9,6 @@
   <!-- Mapbox GL CSS -->
   <link href="https://unpkg.com/mapbox-gl@3.11.0/dist/mapbox-gl.css" rel="stylesheet" />
 
-
   <style>
     html, body {
       margin: 0;
@@ -24,7 +23,11 @@
   </style>
 </head>
 <body>
-  <div id="map"></div>
+  
+  <div id="map-wrapper">
+    <div id="map-loader">Завантаження карти…</div>
+    <div id="map"></div>
+  </div>  
 
   <!-- Підключення головного модуля -->
   <script type="module" src="./main.js"></script>
