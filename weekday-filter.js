@@ -12,68 +12,31 @@ export function setupWeekdayFilter(map) {
 
   const ordered = ['Понеділок','Вівторок','Середа','Четвер','Пʼятниця','Субота','Неділя'];
 
-  // === Контейнери ===
-  const uiContainer = document.createElement('div');
-  uiContainer.id = 'fair-ui';
-  uiContainer.className = 'fair-ui';
+  const todayBtn = document.querySelector('.weekday-today');
+  const allBtn = document.querySelector('.weekday-button[data-day="all"]');
+  const dayButtons = document.querySelectorAll('.weekday-button[data-day]:not([data-day="all"])');
 
-  const logo = document.createElement('div');
-  logo.textContent = 'єЯрмарок';
-  logo.className = 'fair-logo';
+  if (todayBtn) {
+    const today = new Date();
+    const weekdayToday = ordered[(today.getDay() + 6) % 7];
+    todayBtn.textContent = `Сьогодні (${weekdayToday})`;
+    todayBtn.dataset.day = weekdayToday;
+  }
 
-  const panel = document.createElement('div');
-  panel.id = 'weekday-panel';
-  panel.className = 'weekday-panel';
-
-  // === Кнопка "сьогодні" ===
-  const today = new Date();
-  const weekdayToday = ordered[today.getDay() - 1 >= 0 ? today.getDay() - 1 : 6];
-
-  const todayBtn = document.createElement('button');
-  todayBtn.textContent = `Сьогодні (${weekdayToday})`;
-  todayBtn.className = 'weekday-today weekday-button';
-  todayBtn.dataset.day = 'today';
-  panel.appendChild(todayBtn);
-
-  // === Кнопки днів ===
-  const buttons = [];
-
-  const allBtn = document.createElement('button');
-  allBtn.textContent = 'Усі дні';
-  allBtn.dataset.day = 'all';
-  allBtn.className = 'weekday-button';
-  panel.appendChild(allBtn);
-  buttons.push(allBtn);
-
-  ordered.forEach(day => {
-    const btn = document.createElement('button');
-    btn.textContent = day;
-    btn.dataset.day = day;
-    btn.className = 'weekday-button';
-    if (!availableWeekdays.has(day)) {
+  dayButtons.forEach(btn => {
+    if (!availableWeekdays.has(btn.dataset.day)) {
       btn.disabled = true;
       btn.classList.add('disabled');
     }
-    panel.appendChild(btn);
-    buttons.push(btn);
   });
 
-  // === DOM вставка ===
-  uiContainer.appendChild(logo);
-  uiContainer.appendChild(panel);
-  document.body.appendChild(uiContainer);
+  function applyFilter(weekday) {
+    document.querySelectorAll('.weekday-button, .weekday-today').forEach(b => b.classList.remove('active'));
 
-  // === Застосування фільтра ===
-  function applyFilter(weekday, source = null) {
-    // Очистити всі активні стани
-    [...buttons, todayBtn].forEach(b => b.classList.remove('active'));
-
-    // Активувати відповідну кнопку
-    if (source === 'today') {
-      todayBtn.classList.add('active');
-    } else {
-      const active = buttons.find(b => b.dataset.day === weekday);
-      if (active) active.classList.add('active');
+    const targetButton = [...document.querySelectorAll('.weekday-button, .weekday-today')]
+      .find(btn => btn.dataset.day === weekday);
+    if (targetButton) {
+      targetButton.classList.add('active');
     }
 
     if (weekday === 'all') {
@@ -94,16 +57,17 @@ export function setupWeekdayFilter(map) {
     }
   }
 
-  // === Події ===
-  buttons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      applyFilter(btn.dataset.day);
-    });
+  [...dayButtons].forEach(btn => {
+    btn.addEventListener('click', () => applyFilter(btn.dataset.day));
   });
 
-  todayBtn.addEventListener('click', () => {
-    applyFilter(weekdayToday, 'today');
-  });
+  if (todayBtn) {
+    todayBtn.addEventListener('click', () => applyFilter(todayBtn.dataset.day));
+  }
+
+  if (allBtn) {
+    allBtn.addEventListener('click', () => applyFilter('all'));
+  }
 
   applyFilter('all');
 }
