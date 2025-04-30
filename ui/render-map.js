@@ -2,9 +2,56 @@
 // Візуалізація шарів і попапів для ярмарків і зон
 
 import * as mapboxgl from 'https://cdn.skypack.dev/mapbox-gl';
-import { setupWeekdayFilter } from './weekday-filter.js';
+import { setupWeekdayFilter } from '../logic/weekday-filter.js';
 
-export function renderLayers(map, features) {
+export function renderLayers(map, fairs) {
+  // Перетворення fairs у flat-масив features для GeoJSON
+  const features = [];
+
+  fairs.forEach(fair => {
+    // Полігон ярмарку
+    if (fair.polygon) {
+      features.push({
+        type: 'Feature',
+        geometry: fair.polygon,
+        properties: {
+          type: 'polygon',
+          address: fair.address,
+          weekday: fair.dates[0]?.weekday || '',
+        }
+      });
+    }
+
+    // Центроїд ярмарку
+    if (fair.centroid) {
+      features.push({
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: fair.centroid,
+        },
+        properties: {
+          type: 'point',
+          address: fair.address,
+          weekday: fair.dates[0]?.weekday || '',
+        }
+      });
+    }
+
+    // Зони (палатки)
+    fair.zones.forEach(zone => {
+      features.push({
+        type: 'Feature',
+        geometry: zone.geometry,
+        properties: {
+          type: 'zone',
+          address: fair.address,
+          zoneType: zone.zoneType,
+        }
+      });
+    });
+  });
+
   map.addSource('fairs', {
     type: 'geojson',
     data: {
@@ -23,7 +70,7 @@ export function renderLayers(map, features) {
     source: 'fairs',
     paint: {
       'fill-color': '#F2EB3C',
-      'fill-opacity': 0.15,
+      'fill-opacity': 0.70,
     },
     filter: ['==', ['get', 'type'], 'polygon'],
   }, insertBefore);
@@ -50,15 +97,18 @@ export function renderLayers(map, features) {
     },
     filter: ['==', ['get', 'type'], 'point'],
   });
-
-  setupWeekdayFilter(map);
-
+  
   map.once('idle', () => {
-    // Прибираємо лоадер для карти
+
+    // Підключення фільтра днів тижня
+    setupWeekdayFilter(map, fairs);
+
+    // Прибирання лоадеру
     const loader = document.getElementById('map-loader');
     if (loader) loader.style.display = 'none';
     document.body.classList.add('map-ready');
-    
+
+    // Додавання попапів
     let activePopup;
 
     const createPopupAt = (feature, lngLat) => {
@@ -87,7 +137,7 @@ export function renderLayers(map, features) {
 
     map.on('click', 'fair-polygons', (e) => {
       const feature = e.features[0];
-      createPopupAt(feature, e.lngLat); // Показати попап під курсором
+      createPopupAt(feature, e.lngLat);
     });
   });
 

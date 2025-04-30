@@ -1,27 +1,27 @@
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('./fonts/e-Ukraine-Light.woff2') format('woff2');
+  src: url('../fonts/e-Ukraine-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('./fonts/e-Ukraine-Regular.woff2') format('woff2');
+  src: url('../fonts/e-Ukraine-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('./fonts/e-Ukraine-Medium.woff2') format('woff2');
+  src: url('../fonts/e-Ukraine-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('./fonts/e-UkraineHead-LOGO.woff2') format('woff2');
+  src: url('../fonts/e-UkraineHead-LOGO.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
 }
@@ -57,7 +57,9 @@ button, input, select, textarea {
 #map-loader {
   position: absolute;
   inset: 0;
-  background: white;
+  background: #F5F3E9;
+  color: #958D78;
+  font-weight: 300;
   z-index: 10;
   display: flex;
   align-items: center;
@@ -91,7 +93,7 @@ button, input, select, textarea {
   display: inline-block;
   width: 28px;
   height: 28px;
-  background-image: url('./icons/logo-icon.svg');
+  background-image: url('../icons/logo-icon.svg');
   background-size: contain;
   background-repeat: no-repeat;
   vertical-align: middle;
@@ -106,7 +108,7 @@ button, input, select, textarea {
   flex-direction: column;
   gap: 4px;
   font-size: 15px;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 .weekday-button,

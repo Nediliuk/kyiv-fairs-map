@@ -1,10 +1,11 @@
-// === load-zones.js ===
+// === load-fair-zones.js ===
 // Завантаження зон торгівлі з MapServer (layer 2)
 
-const ZONES_API_URL = 'https://gisserver.kyivcity.gov.ua/mayno/rest/services/KYIV_API/Trade_api/MapServer/2/query?where=1%3D1&outFields=*&returnGeometry=true&f=pjson&outSR=4326';
+const ZONES_API_URL = 
+'https://gisserver.kyivcity.gov.ua/mayno/rest/services/KYIV_API/Trade_api/MapServer/2/query?where=1%3D1&outFields=*&returnGeometry=true&f=pjson&outSR=4326';
 
 // Головна функція: завантажує зони і повертає GeoJSON features
-export async function loadZones() {
+export async function loadFairZones() {
   try {
     const res = await fetch(ZONES_API_URL);
     const data = await res.json();
