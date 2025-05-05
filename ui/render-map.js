@@ -2,7 +2,7 @@
 // Візуалізація шарів і попапів для ярмарків і зон
 
 import * as mapboxgl from 'https://cdn.skypack.dev/mapbox-gl';
-import { setupWeekdayFilter } from '/logic/weekday-filter.js';
+import { setupWeekdayFilter } from 'kyiv-fairs-map/logic/weekday-filter.js';
 
 export function renderLayers(map, fairs) {
   // Перетворення fairs у flat-масив features для GeoJSON
