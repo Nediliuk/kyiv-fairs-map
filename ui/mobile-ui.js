@@ -1,6 +1,6 @@
 // mobile-ui.js — мобільна логіка інтерфейсу
 
-import { applyFilter } from '/logic/weekday-filter.js';
+import { applyFilter } from './logic/weekday-filter.js';
 
 // Задає текст активного дня в мобільному футері
 export function setMobileDayLabel(label) {
