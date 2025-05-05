@@ -1,0 +1,78 @@
+/* mobile-style.css */
+
+#mobile-ui {
+    position: fixed;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 16px;
+    padding-bottom: 32px;
+    width: 100%;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+.logo {
+    font-size: 20px;
+}
+
+.logo-mark {
+    width: 24px;
+    height: 24xpx;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+#buttom-container {
+    height: 56px;
+    align-items: stretch;
+    width: 100%;
+    pointer-events: auto;
+}
+
+.weekday-panel {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    width: fit-content;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+.weekday-panel.visible {
+    display: flex;
+}
+
+.weekday-button,
+.weekday-today {
+    width: auto;       
+}
+
+.select-button {
+    background: #fff;
+    border-radius: 8px;
+    border: none;
+    padding: 12px 12px 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 400;
+    color: #1A244D;
+}
+
+.select-button:active {
+    background: #F2F2F3;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}

@@ -74,21 +74,29 @@ button, input, select, textarea {
   z-index: 10;
 }
 
-.fair-logo {
+.floating-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px #1A244D10;
+}
+
+.logo {
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 0 20px;
   font-weight: 500;
   font-size: 28px;
-  padding: 10px 24px;
-  background: white;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 12px hsla(228, 100%, 10%, 0.1);
   color: #0A1543;
 }
 
-.fair-logo::before {
+.logo-mark {
   content: "";
   display: inline-block;
   width: 28px;
@@ -117,11 +125,11 @@ button, input, select, textarea {
   border-radius: 8px;
   border: none;
   text-align: left;
-  background: #fff;
+  background: none;
   color: #1A244D;
   cursor: pointer;
   font-family: inherit;
-  font-size: 14px;
+  font-size: 15px;
   transition: background 0.3s, color 0.3s, box-shadow 0.3s;
 }
 
