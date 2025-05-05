@@ -2,7 +2,7 @@
 // Підключення логіки фільтра до вже існуючого DOM із ui.html та mobile-ui.html
 // Працює з масивом fairs (зібраних сутностей), а не raw GeoJSON features
 
-import { setMobileDayLabel, toggleModal } from '/ui/mobile-ui.js';
+import { setMobileDayLabel, toggleModal } from '../ui/mobile-ui.js';
 
 // === Основна логіка фільтрації винесена за межі setupWeekdayFilter ===
 export function applyFilter(weekday, { map, fairs, allButtons, todayBtn, weekdayToday }, source = null) {
