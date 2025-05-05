@@ -1,4 +1,4 @@
-import { map } from '/data/init-map.js';
+import { map } from './data/init-map.js';
 import { loadFairSites } from './data/load-fair-sites.js';
 import { loadFairZones } from './data/load-fair-zones.js';
 import { assembleFairs } from './logic/fair-assembly.js';
