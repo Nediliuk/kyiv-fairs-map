@@ -1,43 +1,33 @@
-// mobile-ui.js — мобільна логіка інтерфейсу
-
-import { applyFilter } from '../logic/weekday-filter.js';
-
-// Задає текст активного дня в мобільному футері
-export function setMobileDayLabel(label) {
-  const labelEl = document.getElementById('current-day');
-  if (labelEl) labelEl.textContent = label;
-}
-
-// Показує/приховує модальне вікно з днями тижня
-export function toggleModal() {
-  const modal = document.getElementById('weekday-panel');
-  if (modal) modal.classList.toggle('visible');
-}
-
-// Ініціалізує логіку фільтрів для мобільного інтерфейсу
-export function initMobileFilters() {
-  const panel = document.getElementById('weekday-panel');
-  if (!panel) return;
-
-  panel.addEventListener('click', (e) => {
-    if (e.target.tagName !== 'BUTTON') return;
-
-    const day = e.target.getAttribute('data-day');
-    if (!day) return;
-
-    // Застосовуємо фільтр до мапи
-    applyFilter(day);
-
-    // Оновлюємо текст кнопки в футері
-    setMobileDayLabel(e.target.textContent);
-
-    // Приховуємо модалку після вибору
-    toggleModal();
-  });
-
-  // Додаємо клік на кнопку в футері, щоб відкривати модалку
-  const triggerButton = document.getElementById('current-day');
-  if (triggerButton) {
-    triggerButton.addEventListener('click', toggleModal);
+// Відображає назву активного дня тижня в кнопці футера
+export function syncMobileDayLabel() {
+  const labelEl = document.querySelector('#current-day .day-label');
+  const activeBtn = document.querySelector('#weekday-panel .active');
+  if (labelEl && activeBtn) {
+    if (activeBtn.classList.contains('weekday-today')) {
+      labelEl.textContent = 'Сьогодні';
+    } else {
+      labelEl.textContent = activeBtn.textContent;
+    }
   }
 }
+
+// Закриває панель вибору дня тижня на мобільному
+export function closeMobilePanel() {
+  const panel = document.getElementById('weekday-panel');
+  const trigger = document.getElementById('current-day');
+  if (!panel || !trigger) return;
+  panel.classList.remove('open');
+  trigger.classList.remove('expanded');
+}
+
+// Додає механіку відкриття/закриття панелі по кліку на кнопку
+export function enableMobileTogglePanel() {
+  const trigger = document.getElementById('current-day');
+  const panel = document.getElementById('weekday-panel');
+  if (!trigger || !panel) return;
+
+  trigger.addEventListener('click', () => {
+    panel.classList.toggle('open');
+    trigger.classList.toggle('expanded');
+  });
+} 

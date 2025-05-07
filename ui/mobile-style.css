@@ -6,8 +6,8 @@
     box-sizing: border-box;
     padding: 16px;
     padding-bottom: 32px;
-    width: 100%;
-    display: inline-flex;
+    width: 100vw;
+    display: flex;
     flex-direction: column;
     gap: 16px;
     align-items: flex-end;
@@ -16,6 +16,7 @@
 
 .logo {
     font-size: 20px;
+    padding: 0 20px;
 }
 
 .logo-mark {
@@ -26,26 +27,34 @@
 }
 
 #buttom-container {
-    height: 56px;
-    align-items: stretch;
+    height: 64px;
+    box-sizing: border-box;
+    padding: 4px;
     width: 100%;
     pointer-events: auto;
+    z-index: 10;
 }
 
 .weekday-panel {
-    display: none;
     flex-direction: column;
     align-items: stretch;
-    width: fit-content;
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(10px);
     border-radius: 12px;
     overflow: hidden;
-    pointer-events: auto;
+    width: fit-content;
+    transform: translateY(10%);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.2s ease, max-height 0.3s ease; 
+    max-height: 0;
 }
 
-.weekday-panel.visible {
-    display: flex;
+#weekday-panel.open {
+    transform: translateY(0%);
+    opacity: 100%;
+    pointer-events: all;
+    max-height: 1000px;
 }
 
 .weekday-button,
@@ -58,6 +67,7 @@
     border-radius: 8px;
     border: none;
     padding: 12px 12px 12px 20px;
+    height: 100%;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -76,3 +86,14 @@
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+#current-day .icon {
+    transition: transform 0.3s ease-out;
+    transform: rotate(0deg);
+}
+  
+#current-day.expanded .icon {
+    transform: rotate(180deg);
+}
+  
+

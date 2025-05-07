@@ -72,6 +72,10 @@ button, input, select, textarea {
   top: 24px;
   left: 24px;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-start;
 }
 
 .floating-container {
@@ -80,17 +84,17 @@ button, input, select, textarea {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  padding: 4px;
+  padding: 12px 24px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 12px #1A244D10;
+  box-shadow: 0 0 2px #1A244D20, 0 4px 16px #1A244D10
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 20px;
+  padding: 0;
+  gap: 8px;;
   font-weight: 500;
   font-size: 28px;
   color: #0A1543;

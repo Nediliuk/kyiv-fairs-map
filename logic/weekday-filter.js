@@ -1,10 +1,7 @@
-// === weekday-filter.js ===
-// Підключення логіки фільтра до вже існуючого DOM із ui.html та mobile-ui.html
-// Працює з масивом fairs (зібраних сутностей), а не raw GeoJSON features
+// weekday-filter.js — логіка фільтрації ярмарків за днями тижня
 
-import { setMobileDayLabel, toggleModal } from '../ui/mobile-ui.js';
+import { syncMobileDayLabel, closeMobilePanel } from '../ui/mobile-ui.js';
 
-// === Основна логіка фільтрації винесена за межі setupWeekdayFilter ===
 export function applyFilter(weekday, { map, fairs, allButtons, todayBtn, weekdayToday }, source = null) {
   allButtons.forEach(b => b.classList.remove('active'));
   if (todayBtn) todayBtn.classList.remove('active');
@@ -58,20 +55,34 @@ export function setupWeekdayFilter(map, fairs) {
     }
   });
 
-  // Обробники кліків для всіх кнопок (десктоп + мобільні)
-  allButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const day = btn.dataset.day;
-
-      if (btn.closest('#weekday-panel')) {
-        setMobileDayLabel(btn.textContent.trim());
-        toggleModal();
-      }
-
-      applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday }, day === 'today' ? 'today' : null);
+  // Обробники кліків для десктопу
+  if (window.innerWidth > 768) {
+    allButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const day = btn.dataset.day;
+        applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday }, day === 'today' ? 'today' : null);
+      });
     });
-  });
+  }
+
+  // Обробники кліків для мобільного інтерфейсу
+  if (window.innerWidth <= 768) {
+    const panel = document.getElementById('weekday-panel');
+    if (!panel) return;
+
+    panel.addEventListener('click', (e) => {
+      const button = e.target.closest('button');
+      if (!button || !panel.contains(button)) return;
+
+      const day = button.getAttribute('data-day');
+      if (day === null) return;
+
+      applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday });
+      syncMobileDayLabel();
+      closeMobilePanel();
+    });
+  }
 
   // Початкове застосування фільтра (усі дні)
   applyFilter('all', { map, fairs, allButtons, todayBtn, weekdayToday });
-}
+} 
