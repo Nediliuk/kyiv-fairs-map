@@ -11,8 +11,8 @@ let isMobile = false; // глобальна змінна
 // Підключення UI залежно від ширини екрану
 async function loadUI() {
   isMobile = window.innerWidth <= 768;
-  const uiPath = isMobile ? '/ui/mobile-ui.html' : '/ui/ui.html';
-  const uiStylesPath = isMobile ? '/ui/mobile-style.css' : '/ui/style.css';
+  const uiPath = isMobile ? './ui/mobile-ui.html' : './ui/ui.html';
+  const uiStylesPath = isMobile ? './ui/mobile-style.css' : './ui/style.css';
 
   const response = await fetch(uiPath);
   const html = await response.text();
