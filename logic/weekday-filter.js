@@ -1,6 +1,17 @@
 // weekday-filter.js — логіка фільтрації ярмарків за днями тижня
 
 import { syncMobileDayLabel, closeMobilePanel } from '../ui/mobile-ui.js';
+import { renderOffscreenIndicators, updateOffscreenIndicators } from './offscreen-indicators.js';
+
+// Окрема функція для оновлення видимості та позиції індикаторів без пересоздання
+function updateIndicators(map, fairs, weekday) {
+  if (weekday === 'all') {
+    updateOffscreenIndicators(map, fairs);
+  } else {
+    const filteredFairs = fairs.filter(f => f.dates.some(d => d.weekday === weekday));
+    updateOffscreenIndicators(map, filteredFairs);
+  }
+}
 
 export function applyFilter(weekday, { map, fairs, allButtons, todayBtn, weekdayToday }, source = null) {
   allButtons.forEach(b => b.classList.remove('active'));
@@ -20,16 +31,16 @@ export function applyFilter(weekday, { map, fairs, allButtons, todayBtn, weekday
     map.setFilter('fair-points', ['==', ['get', 'type'], 'point']);
     map.setFilter('zone-polygons', ['==', ['get', 'type'], 'zone']);
   } else {
-    const fairIDs = new Set(
-      fairs.filter(f => f.dates.some(d => d.weekday === weekday))
-           .map(f => f.address)
-    );
+    const filteredFairs = fairs.filter(f => f.dates.some(d => d.weekday === weekday));
+    const fairIDs = new Set(filteredFairs.map(f => f.address));
     const idFilter = ['in', ['get', 'address'], ['literal', [...fairIDs]]];
 
     map.setFilter('fair-polygons', ['all', ['==', ['get', 'type'], 'polygon'], idFilter]);
     map.setFilter('fair-points', ['all', ['==', ['get', 'type'], 'point'], idFilter]);
     map.setFilter('zone-polygons', ['all', ['==', ['get', 'type'], 'zone'], idFilter]);
   }
+
+  updateIndicators(map, fairs, weekday); // лише оновлюємо видимість і позицію
 }
 
 export function setupWeekdayFilter(map, fairs) {
@@ -55,11 +66,17 @@ export function setupWeekdayFilter(map, fairs) {
     }
   });
 
+  let currentWeekday = 'all';
+
+  // Створюємо індикатори один раз
+  renderOffscreenIndicators(map, fairs);
+
   // Обробники кліків для десктопу
   if (window.innerWidth > 768) {
     allButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const day = btn.dataset.day;
+        currentWeekday = day;
         applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday }, day === 'today' ? 'today' : null);
       });
     });
@@ -77,12 +94,16 @@ export function setupWeekdayFilter(map, fairs) {
       const day = button.getAttribute('data-day');
       if (day === null) return;
 
+      currentWeekday = day;
       applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday });
       syncMobileDayLabel();
       closeMobilePanel();
     });
   }
 
-  // Початкове застосування фільтра (усі дні)
+  // Оновлення індикаторів при русі або зумі карти
+  map.on('move', () => updateIndicators(map, fairs, currentWeekday));
+
+  // Початкове застосування фільтра
   applyFilter('all', { map, fairs, allButtons, todayBtn, weekdayToday });
-} 
+}

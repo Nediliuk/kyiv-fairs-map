@@ -121,6 +121,12 @@ button, input, select, textarea {
   gap: 4px;
   font-size: 15px;
   font-weight: 400;
+  height: auto;
+  max-height: 1000px;
+  opacity: 100%;
+  transform: translateY(0%);
+  pointer-events: auto;
+
 }
 
 .weekday-button,
@@ -135,6 +141,7 @@ button, input, select, textarea {
   font-family: inherit;
   font-size: 15px;
   transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  min-width: 180px;
 }
 
 .weekday-button:hover:not(.active):not(.disabled),
@@ -200,3 +207,16 @@ button, input, select, textarea {
 .popup-weekday {
   display: block;
 }
+
+#offscreen-indicators .indicator {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: #0033FF;
+  border-radius: 50%;
+  border: none;
+  position: absolute;
+  transform-origin: center center;
+  box-sizing: border-box;
+}
+

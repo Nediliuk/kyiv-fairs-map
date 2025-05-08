@@ -5,6 +5,8 @@ import { assembleFairs } from './logic/fair-assembly.js';
 import { renderLayers } from './ui/render-map.js';
 import { syncMobileDayLabel } from './ui/mobile-ui.js';
 import { enableMobileTogglePanel } from './ui/mobile-ui.js';
+import { renderOffscreenIndicators } from './logic/offscreen-indicators.js';
+
 
 let isMobile = false; // глобальна змінна
 
@@ -40,4 +42,8 @@ map.on('load', async () => {
     syncMobileDayLabel();
     enableMobileTogglePanel();
   }
+
+  map.on('move', () => {
+    renderOffscreenIndicators(map, fairs);
+  });
 });

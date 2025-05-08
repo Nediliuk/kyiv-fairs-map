@@ -26,8 +26,17 @@ export function enableMobileTogglePanel() {
   const panel = document.getElementById('weekday-panel');
   if (!trigger || !panel) return;
 
-  trigger.addEventListener('click', () => {
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
     panel.classList.toggle('open');
     trigger.classList.toggle('expanded');
+  });
+
+  // Закриття панелі при кліку поза нею
+  document.addEventListener('click', (e) => {
+    const isClickInside = panel.contains(e.target) || trigger.contains(e.target);
+    if (!isClickInside) {
+      closeMobilePanel();
+    }
   });
 } 
