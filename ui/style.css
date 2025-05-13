@@ -2,7 +2,7 @@
   font-family: 'e-Ukraine';
   src: url('../fonts/e-Ukraine-Light.woff2') format('woff2');
   font-weight: 300;
-  font-style: normal;
+  font-style: light;
 }
 
 @font-face {
@@ -16,14 +16,14 @@
   font-family: 'e-Ukraine';
   src: url('../fonts/e-Ukraine-Medium.woff2') format('woff2');
   font-weight: 500;
-  font-style: normal;
+  font-style: medium;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
   src: url('../fonts/e-UkraineHead-LOGO.woff2') format('woff2');
   font-weight: 600;
-  font-style: normal;
+  font-style: bold;
 }
 
 html, body {
@@ -38,7 +38,7 @@ button, input, select, textarea {
 }
 
 #map-wrapper {
-  position: relative;
+  position: fixed;
   width: 100%;
   height: 100vh;
   height: 100svh;  
@@ -66,6 +66,7 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  pointer-events: none;
 }
 
 .fair-ui {
@@ -88,7 +89,7 @@ button, input, select, textarea {
   padding: 12px 24px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 0 2px #1A244D20, 0 4px 16px #1A244D10
+  box-shadow: 0 0 2px #1A244D20, 0 4px 20px #1A244D20
 }
 
 .logo {
@@ -116,7 +117,7 @@ button, input, select, textarea {
   background: white;
   border-radius: 12px;
   padding: 6px;
-  box-shadow: 0 4px 12px hsla(228, 100%, 10%, 0.1);
+  box-shadow: 0 0 2px #1A244D20, 0 4px 20px #1A244D20;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -180,7 +181,7 @@ button, input, select, textarea {
   background: #fff;
   border-radius: 12px;
   padding: 14px 20px 16px 20px;
-  box-shadow: 0 2px 10px hsla(228, 100%, 10%, 0.2);
+  box-shadow: 0 0 2px #1A244D20, 0 4px 20px #1A244D20;
   pointer-events: auto;
   overscroll-behavior: none;
 }
@@ -216,8 +217,6 @@ button, input, select, textarea {
   background-color: #0033FF;
   border-radius: 50%;
   border: none;
-  position: absolute;
   transform-origin: center center;
   box-sizing: border-box;
 }
-

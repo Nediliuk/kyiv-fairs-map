@@ -31,7 +31,7 @@
     box-sizing: border-box;
     padding: 4px;
     width: 100%;
-    pointer-events: auto;
+    pointer-events: none;
     z-index: 10;
 }
 
@@ -45,8 +45,9 @@
     width: fit-content;
     transform: translateY(10%);
     opacity: 0;
-    pointer-events: none;
-    transition: transform 0.3s ease, opacity 0.2s ease, max-height 0.3s ease; 
+    pointer-events: auto;
+    touch-action: none;
+    transition: transform 0.3s ease-out, opacity 0.2s ease-out, max-height 0.3s ease-out; 
     max-height: 0;
 }
 
@@ -55,6 +56,7 @@
     opacity: 100%;
     pointer-events: all;
     max-height: 1000px;
+    transition: transform 0.3s ease-out, opacity 0.2s ease-out, max-height 0.3s ease-out; 
 }
 
 .weekday-button,
@@ -74,6 +76,8 @@
     font-size: 15px;
     font-weight: 400;
     color: #1A244D;
+    pointer-events: auto;
+    touch-action: none;
 }
 
 .select-button:active {
@@ -96,4 +100,60 @@
     transform: rotate(180deg);
 }
   
+.indicator {
+    pointer-events: none;
+}
 
+/* Обгортка мобільного попапу */
+.mobile-popup {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 100%;
+  padding: 0 16px;
+  bottom: 112px;
+  z-index: 1000;
+  pointer-events: none;
+  transform: translateY(100%);
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+  opacity: 0;
+  box-sizing: border-box;  
+
+}
+
+
+/* Сам попап */
+.mobile-popup-card {  
+  width: 100%;  
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 2px #1A244D20, 0 4px 16px #1A244D15;
+  padding: 16px;
+  box-sizing: border-box;
+  position: relative;  
+  
+}
+
+.mobile-popup.visible {
+  transform: translateY(0);
+  opacity: 1;
+  max-height: 1000px;
+  height: auto;
+  pointer-events: auto;
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+
+}
+
+/* Кнопка закриття */
+.mobile-popup-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  color: #1A244D70;
+  cursor: pointer;
+  font-weight: 300;
+  display: none;
+}

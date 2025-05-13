@@ -1,8 +1,8 @@
 // === render-map.js ===
-// Візуалізація шарів і попапів для ярмарків і зон
+// Візуалізація шарів для ярмарків і зон
 
-import * as mapboxgl from 'https://cdn.skypack.dev/mapbox-gl';
 import { setupWeekdayFilter } from '../logic/weekday-filter.js';
+import { createPopupAt, attachFairsToMap } from './popups.js';
 
 export function renderLayers(map, fairs) {
   // Перетворення fairs у flat-масив features для GeoJSON
@@ -99,93 +99,24 @@ export function renderLayers(map, fairs) {
   });
 
   map.once('idle', () => {
-
-    // Підключення фільтра днів тижня
     setupWeekdayFilter(map, fairs);
+    attachFairsToMap(map, fairs);
 
-    // Прибирання лоадеру
     const loader = document.getElementById('map-loader');
     if (loader) loader.style.display = 'none';
     document.body.classList.add('map-ready');
 
-    // === Додавання попапів ===
-    let activePopup;
-
-    // Форматування дати у вигляді "1 травня"
-    function formatDate(dateStr) {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString('uk-UA', {
-        day: 'numeric',
-        month: 'long',
-      });
-    }
-
-    // Відмінювання днів тижня (множина, місцевий відмінок)
-    const weekdayPluralLocative = {
-      понеділок: 'понеділок',
-      вівторок: 'вівторок',
-      середа: 'середу',
-      четвер: 'четвер',
-      пʼятниця: 'пʼятницю',
-      субота: 'суботу',
-      неділя: 'неділю',
-    };
-
-    // Форматування списку днів тижня з відмінюванням
-    function formatWeekdaysList(days) {
-      const declined = days.map(d => weekdayPluralLocative[d.toLowerCase()] || d);
-      if (declined.length === 1) return declined[0];
-      if (declined.length === 2) return `${declined[0]} та ${declined[1]}`;
-      return `${declined.slice(0, -1).join(', ')} та ${declined[declined.length - 1]}`;
-    }
-
-    // Основна функція створення попапу
-    const createPopupAt = (feature, lngLat) => {
-      const address = feature.properties.address;
-      const fair = fairs.find(f => f.address === address);
-      if (!fair) return;
-
-      if (activePopup) activePopup.remove();
-
-      // Знаходимо найближчу дату в майбутньому (або сьогодні)
-      const nearest = fair.dates
-        .map(d => ({ ...d, dateObj: new Date(d.date) }))
-        .filter(d => d.dateObj >= new Date())
-        .sort((a, b) => a.dateObj - b.dateObj)[0];
-
-      // Збираємо унікальні дні тижня (порядок зберігається)
-      const uniqueWeekdays = [...new Set(fair.dates.map(d => d.weekday))];
-
-      activePopup = new mapboxgl.Popup({
-        offset: 16,
-        closeButton: false,
-      })
-        .setLngLat(lngLat)
-        .setHTML(`
-          <div class="popup-address">${fair.address}</div>
-          <div class="popup-details">
-            <div>Ярмарки проходять у ${formatWeekdaysList(uniqueWeekdays).toLowerCase()}</div>
-            ${nearest
-              ? `<div>Наступний — у ${weekdayPluralLocative[nearest.weekday.toLowerCase()] || nearest.weekday.toLowerCase()} ${formatDate(nearest.date)}</div>`
-              : '<div><em>Наступну дату ще не оголошено</em></div>'}
-          </div>
-        `)
-        .addTo(map);
-    };
-
-    // Попап над точкою
+    // === Попапи ===
     map.on('click', 'fair-points', (e) => {
       const feature = e.features[0];
-      createPopupAt(feature, feature.geometry.coordinates);
+      createPopupAt(map, feature, feature.geometry.coordinates);
     });
 
-    // Попап під курсором (для полігону)
     map.on('click', 'fair-polygons', (e) => {
       const feature = e.features[0];
-      createPopupAt(feature, e.lngLat);
+      createPopupAt(map, feature, e.lngLat);
     });
 
-    // Наведення на точку — зміна курсору
     map.on('mouseenter', 'fair-points', () => {
       map.getCanvas().style.cursor = 'pointer';
     });

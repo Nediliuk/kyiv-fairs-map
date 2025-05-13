@@ -9,7 +9,7 @@ export function renderOffscreenIndicators(map, fairs) {
     const el = document.createElement('div');
     el.className = 'indicator';
     el.dataset.id = fair.address; // ідентифікатор індикатора
-    el.style.position = 'absolute';
+    el.style.position = 'fixed';
     el.style.opacity = '0'; // спочатку прихований
 
     container.appendChild(el);

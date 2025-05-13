@@ -1,6 +1,6 @@
 // weekday-filter.js — логіка фільтрації ярмарків за днями тижня
 
-import { syncMobileDayLabel, closeMobilePanel } from '../ui/mobile-ui.js';
+import { syncMobileDayLabel, closeMobilePanel } from '../ui/mobile/mobile-ui.js';
 import { renderOffscreenIndicators, updateOffscreenIndicators } from './offscreen-indicators.js';
 
 // Окрема функція для оновлення видимості та позиції індикаторів без пересоздання
@@ -8,12 +8,15 @@ function updateIndicators(map, fairs, weekday) {
   if (weekday === 'all') {
     updateOffscreenIndicators(map, fairs);
   } else {
-    const filteredFairs = fairs.filter(f => f.dates.some(d => d.weekday === weekday));
+    const filteredFairs = fairs.filter(f => f.dates.some(d => d.weekday.toLowerCase() === weekday.toLowerCase()));
     updateOffscreenIndicators(map, filteredFairs);
   }
 }
 
 export function applyFilter(weekday, { map, fairs, allButtons, todayBtn, weekdayToday }, source = null) {
+  if (source === 'today') {
+    weekday = weekdayToday;
+  }
   allButtons.forEach(b => b.classList.remove('active'));
   if (todayBtn) todayBtn.classList.remove('active');
 
@@ -31,7 +34,7 @@ export function applyFilter(weekday, { map, fairs, allButtons, todayBtn, weekday
     map.setFilter('fair-points', ['==', ['get', 'type'], 'point']);
     map.setFilter('zone-polygons', ['==', ['get', 'type'], 'zone']);
   } else {
-    const filteredFairs = fairs.filter(f => f.dates.some(d => d.weekday === weekday));
+    const filteredFairs = fairs.filter(f => f.dates.some(d => d.weekday.toLowerCase() === weekday.toLowerCase()));
     const fairIDs = new Set(filteredFairs.map(f => f.address));
     const idFilter = ['in', ['get', 'address'], ['literal', [...fairIDs]]];
 
@@ -54,7 +57,7 @@ export function setupWeekdayFilter(map, fairs) {
   const todayBtn = document.querySelector('.weekday-today');
 
   const today = new Date();
-  const weekdayToday = ordered[today.getDay() - 1 >= 0 ? today.getDay() - 1 : 6];
+  const weekdayToday = ordered[(today.getDay() + 6) % 7];
   if (todayBtn) todayBtn.textContent = `Сьогодні (${weekdayToday})`;
 
   // Вимкнення кнопок, якщо в цей день немає ярмарків
@@ -73,6 +76,12 @@ export function setupWeekdayFilter(map, fairs) {
 
   // Обробники кліків для десктопу
   if (window.innerWidth > 768) {
+    if (todayBtn) {
+      todayBtn.addEventListener('click', () => {
+        currentWeekday = weekdayToday;
+        applyFilter(weekdayToday, { map, fairs, allButtons, todayBtn, weekdayToday }, 'today');
+      });
+    }
     allButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         const day = btn.dataset.day;
