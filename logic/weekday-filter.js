@@ -104,7 +104,7 @@ export function setupWeekdayFilter(map, fairs) {
       if (day === null) return;
 
       currentWeekday = day;
-      applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday });
+      applyFilter(day, { map, fairs, allButtons, todayBtn, weekdayToday }, day === 'today' ? 'today' : null);
       syncMobileDayLabel();
       closeMobilePanel();
     });
