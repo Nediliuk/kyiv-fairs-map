@@ -61,7 +61,7 @@ export function createPopupAt(map, feature, lngLat) {
     const uniqueWeekdays = [...new Set(fair.dates.map(d => d.weekday))];
     const now = Date.now();
     const nearest = fair.dates.find(d => new Date(d.date).getTime() >= now);
-    showMobilePopup(fair, nearest, uniqueWeekdays);
+    showMobilePopup(fair, nearest, uniqueWeekdays, lngLat);
     return;
   }
 

@@ -130,7 +130,10 @@
   box-shadow: 0 0 2px #1A244D20, 0 4px 16px #1A244D15;
   padding: 16px;
   box-sizing: border-box;
-  position: relative;  
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
   
 }
 

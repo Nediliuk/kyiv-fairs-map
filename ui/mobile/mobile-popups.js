@@ -27,22 +27,20 @@ export function initMobilePopup() {
   popupContainer = createPopupContainer();
   console.log('[popup] container ready', popupContainer);
 
-    // Слухач кліку поза попапом для його закриття
-    ['click', 'touchstart'].forEach(eventType => {
-    document.addEventListener(eventType, (event) => {
-      if (
-        popupContainer?.classList.contains('visible') &&
-        !popupContainer.contains(event.target) &&
-        !event.target.closest('.mobile-popup')
-      ) {
-        hideMobilePopup();
-      }
-    });
+  // Слухач кліку поза попапом для його закриття
+  document.addEventListener('click', (event) => {
+    if (
+      popupContainer?.classList.contains('visible') &&
+      !popupContainer.contains(event.target) &&
+      !event.target.closest('.mobile-popup')
+    ) {
+      hideMobilePopup();
+    }
   });
 }
 
 // === Показ мобільного попапу ===
-export function showMobilePopup(fair, nearest, uniqueWeekdays) {
+export function showMobilePopup(fair, nearest, uniqueWeekdays, lngLat) {
   if (!popupContainer) {
     console.warn('[popup] popupContainer is not initialized');
     return;
@@ -55,7 +53,7 @@ export function showMobilePopup(fair, nearest, uniqueWeekdays) {
   card.className = 'mobile-popup-card';
   card.innerHTML = `
     <button class="mobile-popup-close">×</button>
-    ${getPopupContent(fair, nearest, uniqueWeekdays)}
+    ${getPopupContent(fair, nearest, uniqueWeekdays, lngLat)}
   `;
 
   popupContainer.appendChild(card);
