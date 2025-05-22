@@ -31,13 +31,21 @@ function formatWeekdaysList(days) {
   return `${declined.slice(0, -1).join(', ')} та ${declined[declined.length - 1]}`;
 }
 
-export function getPopupContent(fair, nearest, uniqueWeekdays) {
+export function getPopupContent(fair, nearest, uniqueWeekdays, lngLat) {
+  const lat = lngLat.lat;
+  const lng = lngLat.lng;
   return `
-    <div class="popup-address">${fair.address}</div>
+    <a 
+      class="popup-address" 
+      href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}"
+      target="_blank" rel="noopener"
+    >
+      ${fair.address}
+    </a>
     <div class="popup-details">
-      <div>Ярмарки проходять у ${formatWeekdaysList(uniqueWeekdays).toLowerCase()}</div>
+      <div>Ярмарки проходять у <span class="highlight">${formatWeekdaysList(uniqueWeekdays).toLowerCase()}</span></div>
       ${nearest
-        ? `<div>Наступний — у ${weekdayPluralLocative[nearest.weekday.toLowerCase()] || nearest.weekday.toLowerCase()} ${formatDate(nearest.date)}</div>`
+        ? `<div>Наступний — у <span class="highlight">${weekdayPluralLocative[nearest.weekday.toLowerCase()] || nearest.weekday.toLowerCase()} ${formatDate(nearest.date)}</span></div>`
         : '<div><em>Наступну дату ще не оголошено</em></div>'}
     </div>
   `;
@@ -71,7 +79,7 @@ export function createPopupAt(map, feature, lngLat) {
     closeButton: false,
   })
     .setLngLat(lngLat)
-    .setHTML(getPopupContent(fair, nearest, uniqueWeekdays))
+    .setHTML(getPopupContent(fair, nearest, uniqueWeekdays, lngLat))
     .addTo(map);
 }
 

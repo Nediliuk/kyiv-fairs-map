@@ -189,11 +189,22 @@ button, input, select, textarea {
   border-top-color: white;
 }
 
+.mapboxgl-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .popup-address {
   font-weight: 400;
   font-size: 16px;
   line-height: 140%;
-  margin-bottom: 8px;
+  color: #1A244D;
+  text-decoration: underline;
+}
+
+.popup-address:hover{
+  text-decoration: none !important;
   color: #1A244D;
 }
 
@@ -207,6 +218,10 @@ button, input, select, textarea {
 .popup-date,
 .popup-weekday {
   display: block;
+}
+
+.highlight {
+  color: #1A244D;
 }
 
 #offscreen-indicators .indicator {

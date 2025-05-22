@@ -92,8 +92,22 @@ export function renderLayers(map, fairs) {
     type: 'circle',
     source: 'fairs',
     paint: {
-      'circle-radius': 6,
+      'circle-radius': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        13, 6,
+        14, 8,
+        17, 8,
+      ],
       'circle-color': '#0033FF',
+      'circle-opacity': [
+        'interpolate',
+        ['linear'],
+        ['zoom'],
+        14.5, 1,
+        15, 0,
+      ]
     },
     filter: ['==', ['get', 'type'], 'point'],
   });

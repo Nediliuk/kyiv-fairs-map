@@ -10,7 +10,7 @@ export const map = new mapboxgl.Map({
   pitch: 57.75,
   bearing: 36.96,
   zoom: 17,
-  minzoom: 13,
+  minZoom: 12,
   maxBounds: [
     [30.30, 50.35], // SW
     [30.72, 50.55]  // NE
