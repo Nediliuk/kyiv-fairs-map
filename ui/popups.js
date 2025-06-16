@@ -50,8 +50,7 @@ export function getPopupContent(fair, nearest, uniqueWeekdays) {
   `;
 }
 
-export function createPopupAt(map, feature, lngLat) {
-  const fairs = map.fairs;
+export function createPopupAt(map, fairs, feature, lngLat) {
   const address = feature.properties.address;
   const fair = fairs?.find(f => f.address === address);
   if (!fair) return;
@@ -80,9 +79,4 @@ export function createPopupAt(map, feature, lngLat) {
     .setLngLat(lngLat)
     .setHTML(getPopupContent(fair, nearest, uniqueWeekdays))
     .addTo(map);
-}
-
-// Хак: зберігаємо список ярмарків у map.fairs для доступу в інших модулях
-export function attachFairsToMap(map, fairs) {
-  map.fairs = fairs;
 }

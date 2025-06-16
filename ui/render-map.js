@@ -2,7 +2,7 @@
 // Візуалізація шарів для ярмарків і зон
 
 import { setupWeekdayFilter } from '../logic/weekday-filter.js';
-import { createPopupAt, attachFairsToMap } from './popups.js';
+import { createPopupAt } from './popups.js';
 
 export function renderLayers(map, fairs) {
   // Перетворення fairs у flat-масив features для GeoJSON
@@ -114,7 +114,6 @@ export function renderLayers(map, fairs) {
 
   map.once('idle', () => {
     setupWeekdayFilter(map, fairs);
-    attachFairsToMap(map, fairs);
 
     const loader = document.getElementById('map-loader');
     if (loader) loader.style.display = 'none';
@@ -123,12 +122,12 @@ export function renderLayers(map, fairs) {
     // === Попапи ===
     map.on('click', 'fair-points', (e) => {
       const feature = e.features[0];
-      createPopupAt(map, feature, feature.geometry.coordinates);
+      createPopupAt(map, fairs, feature, feature.geometry.coordinates);
     });
 
     map.on('click', 'fair-polygons', (e) => {
       const feature = e.features[0];
-      createPopupAt(map, feature, e.lngLat);
+      createPopupAt(map, fairs, feature, e.lngLat);
     });
 
     map.on('mouseenter', 'fair-points', () => {

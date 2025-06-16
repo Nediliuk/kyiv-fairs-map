@@ -5,7 +5,7 @@ import { assembleFairs } from './logic/fair-assembly.js';
 import { renderLayers } from './ui/render-map.js';
 import { syncMobileDayLabel } from './ui/mobile/mobile-ui.js';
 import { enableMobileTogglePanel } from './ui/mobile/mobile-ui.js';
-import { renderOffscreenIndicators } from './logic/offscreen-indicators.js';
+import { updateOffscreenIndicators } from './logic/offscreen-indicators.js';
 import { initMobilePopup } from './ui/mobile/mobile-popups.js';
 
 // === Глобальна змінна для виявлення мобільних екранів ===
@@ -36,21 +36,27 @@ console.dir(document.body);
 
 // === Ініціалізація карти після завантаження ===
 map.on('load', async () => {
-  const sites = await loadFairSites();
-  const zones = await loadFairZones();
+  try {
+    const [sites, zones] = await Promise.all([
+      loadFairSites(),
+      loadFairZones()
+    ]);
 
-  const fairs = assembleFairs({ sites, zones });
+    const fairs = assembleFairs({ sites, zones });
 
-  renderLayers(map, fairs);
+    renderLayers(map, fairs);
 
-  // Додаткові мобільні налаштування після рендеру
-  if (window.isMobile) {
-    syncMobileDayLabel(); // оновлення підпису кнопки з днем тижня
-    enableMobileTogglePanel(); // активація логіки показу/приховування панелі
+    // Додаткові мобільні налаштування після рендеру
+    if (window.isMobile) {
+      syncMobileDayLabel(); // оновлення підпису кнопки з днем тижня
+      enableMobileTogglePanel(); // активація логіки показу/приховування панелі
+    }
+
+    // Відображення індикаторів при русі карти
+    map.on('move', () => {
+      updateOffscreenIndicators(map, fairs);
+    });
+  } catch (err) {
+    console.error('Помилка при завантаженні даних ярмарків:', err);
   }
-
-  // Відображення індикаторів при русі карти
-  map.on('move', () => {
-    renderOffscreenIndicators(map, fairs);
-  });
 });
