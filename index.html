@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html lang="uk">
 <head>
-  
   <meta charset="UTF-8" />
-  <title>Карта ярмарків Києва</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карта ярмарків Києва</title>
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Карта ярмарків Києва" />
+  <meta property="og:description" content="Дивись, де і коли в Києві проходять продуктові ярмарки — зручно, щоденно, на карті." />
+  <meta property="og:image" content="https://nediliuk.github.io/kyiv-fairs-map/og-image.jpg" />
+  <meta property="og:url" content="https://nediliuk.github.io/kyiv-fairs-map/" />
+  <meta property="og:locale" content="uk_UA" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Карта ярмарків Києва" />
+  <meta name="twitter:description" content="Знайди продуктові ярмарки у Києві — на карті, з фільтром за днем." />
+  <meta name="twitter:image" content="https://nediliuk.github.io/kyiv-fairs-map/og-image.jpg" />
+
+  <!-- Стили -->
   <link rel="stylesheet" href="./ui/style.css">
   <link rel="stylesheet" href="./ui/mobile/mobile-style.css" media="(max-width: 768px)">
-
-  <!-- Mapbox GL CSS -->
   <link href="https://unpkg.com/mapbox-gl@3.11.0/dist/mapbox-gl.css" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 
   <style>
     html, body {
@@ -17,7 +33,6 @@
       padding: 0;
       height: 100%;
     }
-
   </style>
 
   <!-- Google tag (gtag.js) -->
@@ -26,7 +41,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-W1Q0R4LXLJ');
   </script>
 </head>

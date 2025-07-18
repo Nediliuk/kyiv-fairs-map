@@ -3,59 +3,54 @@ import { loadFairSites } from './data/load-fair-sites.js';
 import { loadFairZones } from './data/load-fair-zones.js';
 import { assembleFairs } from './logic/fair-assembly.js';
 import { renderLayers } from './ui/render-map.js';
-import { syncMobileDayLabel } from './ui/mobile/mobile-ui.js';
-import { enableMobileTogglePanel } from './ui/mobile/mobile-ui.js';
+import {
+  syncMobileDayLabel,
+  enableMobileTogglePanel,
+} from './ui/mobile/mobile-ui.js';
 import { updateOffscreenIndicators } from './logic/offscreen-indicators.js';
 import { initMobilePopup } from './ui/mobile/mobile-popups.js';
+import { initFeedback } from './logic/feedback.js';
 
-// === Глобальна змінна для виявлення мобільних екранів ===
-// Оновлює window.isMobile залежно від ширини вікна
+// Виявлення мобільного екрана
 function updateIsMobile() {
   window.isMobile = window.innerWidth <= 768;
 }
-updateIsMobile(); // Початкове встановлення при завантаженні
-window.addEventListener('resize', updateIsMobile); // Оновлення при зміні розміру
+updateIsMobile();
+window.addEventListener('resize', updateIsMobile);
 
-// === Завантаження UI залежно від типу пристрою ===
+// Завантаження UI (десктоп / мобільний)
 async function loadUI() {
-  const uiPath = window.isMobile ? './ui/mobile/mobile-ui.html' : './ui/ui.html';
-
-  const response = await fetch(uiPath);
-  const html = await response.text();
-  document.getElementById('ui-container').innerHTML = html;
+  const uiPath = window.isMobile
+    ? './ui/mobile/mobile-ui.html'
+    : './ui/ui.html';
+  const html = await fetch(uiPath).then((r) => r.text());
+  const uiContainer = document.getElementById('ui-container');
+  uiContainer.innerHTML = html;
 
   console.log('[UI loaded]');
 
-  // === Ініціалізація мобільного попапу після підключення UI ===
   initMobilePopup();
+  initFeedback(); // кнопка тепер у DOM
 }
-
 loadUI();
 
-console.dir(document.body);
-
-// === Ініціалізація карти після завантаження ===
+// Ініціалізація карти
 map.on('load', async () => {
   try {
     const [sites, zones] = await Promise.all([
       loadFairSites(),
-      loadFairZones()
+      loadFairZones(),
     ]);
 
     const fairs = assembleFairs({ sites, zones });
-
     renderLayers(map, fairs);
 
-    // Додаткові мобільні налаштування після рендеру
     if (window.isMobile) {
-      syncMobileDayLabel(); // оновлення підпису кнопки з днем тижня
-      enableMobileTogglePanel(); // активація логіки показу/приховування панелі
+      syncMobileDayLabel();
+      enableMobileTogglePanel();
     }
 
-    // Відображення індикаторів при русі карти
-    map.on('move', () => {
-      updateOffscreenIndicators(map, fairs);
-    });
+    map.on('move', () => updateOffscreenIndicators(map, fairs));
   } catch (err) {
     console.error('Помилка при завантаженні даних ярмарків:', err);
   }

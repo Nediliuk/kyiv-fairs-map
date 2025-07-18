@@ -234,3 +234,101 @@ button, input, select, textarea {
   transform-origin: center center;
   box-sizing: border-box;
 }
+
+/* UI-компоненти — кнопка */
+.feedback-button-wrapper {
+  margin: 16px auto 0 auto;
+  text-align: center;
+}
+
+.ui-secondary-button {
+  background: #fff;
+  color: #1A244D;
+  border: 1px solid #ccc;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.ui-secondary-button:hover {
+  background: #F1F1F3;
+  border-color: #aaa;
+}
+
+/* Модальне вікно фідбеку */
+#feedback-wrapper {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.form-container {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 0 2px #1A244D20, 0 6px 32px #1A244D30;
+  max-width: 520px;
+  width: 100%;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-title h1 {
+  font-size: 20px;
+  margin: 0 0 4px 0;
+}
+
+.form-title p {
+  font-size: 15px;
+  color: #1A244D99;
+  margin: 0;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.input-group textarea {
+  resize: vertical;
+}
+
+.warning {
+  font-size: 13px;
+  color: #D40000;
+}
+
+.feedback-form button[type="submit"] {
+  margin-top: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  background-color: #0033FF;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.feedback-form button[type="submit"]:hover {
+  background-color: #0022CC;
+}
+
