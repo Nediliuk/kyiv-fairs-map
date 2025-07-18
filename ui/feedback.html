@@ -1,0 +1,38 @@
+// === feedback.html ===
+// Модальне вікто із формою фідбеку
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Відгук про карту ярмарків</title>
+  <link rel="stylesheet" href="../ui/style.css">
+</head>
+<body>
+  <div class="form-container">
+    <div class="form-title">
+      <h1>Допоможіть покращити єЯрмарок!</h1>
+      <p>Напишіть відгук анонімно, або залиште пошту для зворотного зв’язку</p>
+    </div>
+
+    <form id="feedback-form" class="feedback-form">
+      <div class="input-group">
+        <label for="email">Пошта</label>
+        <input type="email" name="email" id="email" placeholder="email або залиште порожнім">
+        <p class="warning" hidden>В цьому полі — або пошта, або нічого…</p>
+      </div>
+
+      <div class="input-group">
+        <label for="message">Повідомлення</label>
+        <textarea name="message" id="message" rows="5" placeholder="Що покращити?" required></textarea>
+        <p class="warning" hidden>Порожнє повідомлення відправити не можна…</p>
+      </div>
+
+      <button type="submit">Надіслати</button>
+    </form>
+  </div>
+
+  <script type="module" src="./ui/feedback.js"></script>
+</body>
+</html>
