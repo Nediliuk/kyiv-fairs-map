@@ -1,16 +1,16 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // заміни на свій URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHvMD-aL0E8sAqp0-D_AT2k0xvigwnad2ubmjVo0cfJYbCE2TwKj2MiIMn_OjCBnKg/exec://script.google.com/macros/s/1S5ZXtZlBnqowTY2KtXCqapiG9DKnF7QUD0kBCPNBnAPuNX_A2tKyNXfE/exec"; // заміни на свій URL
 
 // Довантаження HTML форми (одноразово)
 async function ensureFeedbackHtml() {
-  let wrapper = document.getElementById('feedback-form');
+  let wrapper = document.getElementById('feedback-wrapper');
   if (wrapper) return wrapper; // вже в DOM
 
   const html = await fetch('./ui/feedback.html').then(r => r.text());
   const temp = document.createElement('div');
   temp.innerHTML = html.trim();
-  wrapper = temp.querySelector('#feedback-form') || temp.firstElementChild;
+  wrapper = temp.querySelector('#feedback-wrapper') || temp.firstElementChild;
 
   document.body.appendChild(wrapper);
   initFormLogic(); // слухачі форми після вставки
@@ -24,7 +24,7 @@ async function openFeedback() {
 }
 
 function closeFeedback() {
-  const wrapper = document.getElementById('feedback-form');
+  const wrapper = document.getElementById('feedback-wrapper');
   if (wrapper) wrapper.style.display = 'none';
 }
 
@@ -40,7 +40,7 @@ async function submitFeedback(data) {
 
 // Логіка полів форми та сабміту
 function initFormLogic() {
-  const wrapper = document.getElementById('feedback-form');
+  const wrapper = document.getElementById('feedback-wrapper');
   const form = document.getElementById('feedback-form');
   if (!wrapper || !form) return;
 
