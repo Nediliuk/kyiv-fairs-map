@@ -1,3 +1,4 @@
+/* Шрифти */
 @font-face {
   font-family: 'e-Ukraine';
   src: url('../fonts/e-Ukraine-Light.woff2') format('woff2');
@@ -26,17 +27,33 @@
   font-style: bold;
 }
 
+/* Загальні стилі */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
   font-family: 'e-Ukraine', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: #1A244D;
 }
 
 button, input, select, textarea {
   font-family: inherit;
 }
 
+label {
+  font-weight: 400;
+  font-size: 13px;
+  color: #1A244D90;
+  letter-spacing: 0.3px;
+}
+
+.floating {
+  box-shadow: 0 0 2px #1A244D20, 0 4px 20px #1A244D20;
+}
+
+/* Стилі для мапи */
 #map-wrapper {
   position: fixed;
   width: 100%;
@@ -68,6 +85,7 @@ button, input, select, textarea {
   pointer-events: none;
 }
 
+/* Стилі для елементів інтерфейсу */
 .fair-ui {
   position: absolute;
   top: 24px;
@@ -79,7 +97,7 @@ button, input, select, textarea {
   align-items: flex-start;
 }
 
-.floating-container {
+.logo-container {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -88,7 +106,6 @@ button, input, select, textarea {
   padding: 12px 24px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 0 2px #1A244D20, 0 4px 20px #1A244D20
 }
 
 .logo {
@@ -112,11 +129,16 @@ button, input, select, textarea {
   vertical-align: middle;
 }
 
+.controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .weekday-panel {
   background: white;
   border-radius: 12px;
   padding: 6px;
-  box-shadow: 0 0 2px #1A244D20, 0 4px 20px #1A244D20;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -127,21 +149,28 @@ button, input, select, textarea {
   opacity: 100%;
   transform: translateY(0%);
   pointer-events: auto;
-
 }
 
-.weekday-button,
-.weekday-today {
+/* Кнопки */
+button {
+  background: #fff;
+  color: #1A244D;
+  border: none;
   padding: 12px 16px;
   border-radius: 8px;
   border: none;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+}
+
+/* Кнопки для вибору дня тижня */
+.weekday-button,
+.weekday-today {
   text-align: left;
   background: none;
   color: #1A244D;
-  cursor: pointer;
   font-family: inherit;
-  font-size: 15px;
-  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
   min-width: 180px;
 }
 
@@ -169,6 +198,72 @@ button, input, select, textarea {
   cursor: not-allowed;
 }
 
+/* Main-button */
+.main-button {
+  background: #0033FF;
+  color: #fff;
+}
+
+.main-button:hover {
+  background: #F2EB3C;
+  color: #1A244D;
+}
+
+/* Інпути */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  max-height: 100%;
+}
+
+.input-group label {
+  color: #0033FF;
+}
+
+.input-group input,
+.input-group textarea {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  border: none;
+  background-color: #1A244D10;
+}
+
+.input-group input:focus,
+.input-group input:focus-visible,
+.input-group textarea:focus,
+.input-group textarea:focus-visible {
+  outline: none;
+  border: none;
+  background-color: #1A244D10;
+  box-shadow: none;
+  box-shadow: inset 0 0 0 1px #1A244D20;
+}
+
+.input-group textarea {
+  resize: none;
+}
+
+.input-group input:focus::placeholder,
+.input-group input:focus-visible::placeholder,
+.input-group textarea:focus::placeholder,
+.input-group textarea:focus-visible::placeholder{  
+  color: #1A244D40;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #1A244D70;
+}
+
+.warning {
+  font-size: 13px;
+  color: #D40000;
+}
+
+/* Попоапи */
 .mapboxgl-popup {
   max-width: 420px !important;
   font-family: 'e-Ukraine', sans-serif;
@@ -235,34 +330,11 @@ button, input, select, textarea {
   box-sizing: border-box;
 }
 
-/* UI-компоненти — кнопка */
-.feedback-button-wrapper {
-  margin: 16px auto 0 auto;
-  text-align: center;
-}
-
-.ui-secondary-button {
-  background: #fff;
-  color: #1A244D;
-  border: 1px solid #ccc;
-  padding: 8px 20px;
-  border-radius: 8px;
-  font-size: 15px;
-  cursor: pointer;
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.ui-secondary-button:hover {
-  background: #F1F1F3;
-  border-color: #aaa;
-}
-
 /* Модальне вікно фідбеку */
 #feedback-wrapper {
   position: fixed;
   inset: 0;
   z-index: 100;
-  display: none;
   align-items: center;
   justify-content: center;
   background: rgba(0, 0, 0, 0.4);
@@ -270,57 +342,44 @@ button, input, select, textarea {
   box-sizing: border-box;
 }
 
-.form-container {
+#feedback-container {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 0 2px #1A244D20, 0 6px 32px #1A244D30;
+  border-radius: 20px;
   max-width: 520px;
   width: 100%;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: fixed;
+  height: fit-content;
+  max-height: 90vh;
+}
+
+.form-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .form-title h1 {
   font-size: 20px;
   margin: 0 0 4px 0;
+  font-weight: 500;
 }
 
 .form-title p {
-  font-size: 15px;
-  color: #1A244D99;
+  color: #1A244D90;
   margin: 0;
 }
 
-.input-group {
+.feedback-form {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-}
-
-.input-group input,
-.input-group textarea {
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 15px;
-}
-
-.input-group textarea {
-  resize: vertical;
-}
-
-.warning {
-  font-size: 13px;
-  color: #D40000;
+  gap: 16px;
 }
 
 .feedback-form button[type="submit"] {
-  margin-top: 8px;
-  padding: 12px;
-  font-size: 15px;
-  font-weight: 500;
   background-color: #0033FF;
   color: #fff;
   border: none;

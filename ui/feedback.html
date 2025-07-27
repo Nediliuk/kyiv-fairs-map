@@ -7,13 +7,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Відгук про карту ярмарків</title>
-  <link rel="stylesheet" href="../ui/style.css">
+  <link rel="stylesheet" href="./ui/style.css">
 </head>
 <body>
-  <div class="form-container">
+    <div id="feedback-wrapper" class="feedback-wrapper">
+    <div id="feedback-container" class="modal-container">
     <div class="form-title">
       <h1>Допоможіть покращити єЯрмарок!</h1>
-      <p>Напишіть відгук анонімно, або залиште пошту для зворотного зв’язку</p>
+      <p>Напишіть відгук анонімно, або залиште пошту для зворотного зв’язку</p>
     </div>
 
     <form id="feedback-form" class="feedback-form">
@@ -31,8 +32,8 @@
 
       <button type="submit">Надіслати</button>
     </form>
+    </div>
   </div>
 
-  <script type="module" src="./ui/feedback.js"></script>
 </body>
 </html>
