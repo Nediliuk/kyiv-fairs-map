@@ -160,3 +160,36 @@
   font-weight: 300;
   display: none;
 }
+
+#feedback-toggle {
+    position: fixed;
+    bottom: 112px;
+    margin-left: 16px;
+    border-radius: 12px;
+}
+
+#feedback-wrapper {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: #F5F3E950;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+    padding: 0px;
+}
+
+#feedback-container {
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    border-radius: 12px;
+    padding: 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    margin: 0 16px;
+}

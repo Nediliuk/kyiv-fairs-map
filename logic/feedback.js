@@ -1,6 +1,6 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHvMD-aL0E8sAqp0-D_AT2k0xvigwnad2ubmjVo0cfJYbCE2TwKj2MiIMn_OjCBnKg/exec://script.google.com/macros/s/1S5ZXtZlBnqowTY2KtXCqapiG9DKnF7QUD0kBCPNBnAPuNX_A2tKyNXfE/exec"; // заміни на свій URL
+const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // заміни на свій URL
 
 // Довантаження HTML форми (одноразово)
 async function ensureFeedbackHtml() {

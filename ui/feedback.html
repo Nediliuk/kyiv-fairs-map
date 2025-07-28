@@ -11,7 +11,7 @@
 </head>
 <body>
     <div id="feedback-wrapper" class="feedback-wrapper">
-    <div id="feedback-container" class="modal-container">
+    <div id="feedback-container" class="modal-container floating">
     <div class="form-title">
       <h1>Допоможіть покращити єЯрмарок!</h1>
       <p>Напишіть відгук анонімно, або залиште пошту для зворотного зв’язку</p>
@@ -20,14 +20,14 @@
     <form id="feedback-form" class="feedback-form">
       <div class="input-group">
         <label for="email">Пошта</label>
-        <input type="email" name="email" id="email" placeholder="email або залиште порожнім">
-        <p class="warning" hidden>В цьому полі — або пошта, або нічого…</p>
+        <input type="text" name="email" id="email" placeholder="Email (якщо хочете)">
+        <p class="warning">В цьому полі — або пошта, або нічого…</p>
       </div>
 
       <div class="input-group">
         <label for="message">Повідомлення</label>
         <textarea name="message" id="message" rows="5" placeholder="Що покращити?" required></textarea>
-        <p class="warning" hidden>Порожнє повідомлення відправити не можна…</p>
+        <p class="warning">Порожнє повідомлення відправити не можна…</p>
       </div>
 
       <button type="submit">Надіслати</button>
