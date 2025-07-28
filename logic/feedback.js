@@ -1,13 +1,14 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyCkvtDH37DV89aTrn_DOi-S5Jt1_ruJiG3LqBSwoT1vZ2-Tb1omin3MFTaz_mmDkuH/exec"; // заміни на свій URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNGGsN6_-w0SvHCQIHzHWEuEOUhVxu3bQ0Zd2zmv5x3wjUVrm5jJfwR-_kG-XPhYKV/exec"; // URL веб‑застосунку Apps Script
+const FEEDBACK_PATH = './ui/feedback.html'; // шлях до HTML форми (змінюй при потребі)
 
 // Довантаження HTML форми (одноразово)
 async function ensureFeedbackHtml() {
   let wrapper = document.getElementById('feedback-wrapper');
   if (wrapper) return wrapper; // вже в DOM
 
-  const html = await fetch('./ui/feedback.html').then(r => r.text());
+  const html = await fetch(FEEDBACK_PATH).then(r => r.text());
   const temp = document.createElement('div');
   temp.innerHTML = html.trim();
   wrapper = temp.querySelector('#feedback-wrapper') || temp.firstElementChild;
@@ -28,12 +29,12 @@ function closeFeedback() {
   if (wrapper) wrapper.style.display = 'none';
 }
 
-// Сабміт форми
+// Сабміт форми: simple request без pre‑flight CORS
 async function submitFeedback(data) {
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
+    headers: { 'Content-Type': 'text/plain' }, // simple request → без pre‑flight
     body: JSON.stringify(data),
-    headers: { 'Content-Type': 'application/json' },
   });
   if (!res.ok) throw new Error('Помилка при надсиланні');
 }
@@ -41,74 +42,50 @@ async function submitFeedback(data) {
 // Логіка полів форми та сабміту
 function initFormLogic() {
   const wrapper = document.getElementById('feedback-wrapper');
-  const form = document.getElementById('feedback-form');
+  const form    = document.getElementById('feedback-form');
   if (!wrapper || !form) return;
 
   wrapper.addEventListener('click', (e) => {
     if (e.target === wrapper) closeFeedback();
   });
-
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeFeedback();
   });
 
-  // === Валідація та сабміт ===
-  const emailInput = form.querySelector('input[type="text"], input[name="email"], #email');
-  const messageInput = form.querySelector('textarea[name="message"], textarea, #message');
-
-  // Додаємо елементи для помилок, якщо їх немає
-  let emailError = form.querySelector('.email-error');
-  if (!emailError && emailInput) {
-    emailError = document.createElement('div');
-    emailError.className = 'email-error error';
-    emailInput.insertAdjacentElement('afterend', emailError);
-  }
-  let messageError = form.querySelector('.message-error');
-  if (!messageError && messageInput) {
-    messageError = document.createElement('div');
-    messageError.className = 'message-error error';
-    messageInput.insertAdjacentElement('afterend', messageError);
-  }
+  const emailInput   = form.querySelector('input[name="email"]');
+  const messageInput = form.querySelector('textarea[name="message"]');
+  const emailError   = form.querySelector('.email-error')   || createErrorBlock(emailInput,  'email-error');
+  const messageError = form.querySelector('.message-error') || createErrorBlock(messageInput,'message-error');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     let valid = true;
 
-    // Email: дозволяємо порожній або валідний email
+    // Email: порожній або валідний
     if (emailInput) {
       const email = emailInput.value.trim();
       if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        emailError.textContent = "Тут має бути саме email, а не щось інше…";
-        emailError.style.display = "block";
+        showError(emailError, 'Тут має бути email, або залиште поле порожнім…');
         valid = false;
-      } else {
-        emailError.textContent = "";
-        emailError.style.display = "none";
-      }
+      } else hideError(emailError);
     }
 
-    // Message: обов'язкове поле
+    // Message: обовʼязкове
     if (messageInput) {
       const message = messageInput.value.trim();
       if (!message) {
-        messageError.textContent = "Порожнє повідомлення відправити не можна…";
-        messageError.style.display = "block";
+        showError(messageError, 'Порожнє повідомлення відправити не можна…');
         valid = false;
-      } else {
-        messageError.textContent = "";
-        messageError.style.display = "none";
-      }
+      } else hideError(messageError);
     }
 
     if (!valid) return;
 
-    // Якщо все валідно — відправляємо
-    const data = {
-      email: emailInput ? emailInput.value.trim() : "",
-      message: messageInput ? messageInput.value.trim() : "",
-    };
     try {
-      await submitFeedback(data);
+      await submitFeedback({
+        email:   emailInput   ? emailInput.value.trim()   : '',
+        message: messageInput ? messageInput.value.trim() : '',
+      });
       alert('Дякуємо за ваш відгук!');
       form.reset();
       closeFeedback();
@@ -117,20 +94,20 @@ function initFormLogic() {
     }
   });
 
-  // При зміні полів ховаємо помилки
-  if (emailInput) {
-    emailInput.addEventListener('input', () => {
-      emailError.textContent = "";
-      emailError.style.display = "none";
-    });
-  }
-  if (messageInput) {
-    messageInput.addEventListener('input', () => {
-      messageError.textContent = "";
-      messageError.style.display = "none";
-    });
-  }
+  emailInput?.addEventListener('input',   () => hideError(emailError));
+  messageInput?.addEventListener('input', () => hideError(messageError));
 }
+
+function createErrorBlock(afterEl, className) {
+  if (!afterEl) return null;
+  const div = document.createElement('div');
+  div.className = `${className} error`;
+  afterEl.insertAdjacentElement('afterend', div);
+  return div;
+}
+
+function showError(el, msg) { if (el) { el.textContent = msg; el.style.display = 'block'; } }
+function hideError(el)      { if (el) { el.textContent = '';  el.style.display = 'none';  } }
 
 // Публічна ініціалізація: привʼязати кнопку
 function initFeedback() {
