@@ -1,6 +1,6 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // заміни на свій URL
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfVL7-09bzO1Kz3Jhvq9x6OEI4_Q6KMF2XmkFJd6cdkp918HSA5g7og5AXaRJioY6g/exec"; // заміни на свій URL
 
 // Довантаження HTML форми (одноразово)
 async function ensureFeedbackHtml() {
@@ -52,11 +52,60 @@ function initFormLogic() {
     if (e.key === 'Escape') closeFeedback();
   });
 
+  // === Валідація та сабміт ===
+  const emailInput = form.querySelector('input[type="text"], input[name="email"], #email');
+  const messageInput = form.querySelector('textarea[name="message"], textarea, #message');
+
+  // Додаємо елементи для помилок, якщо їх немає
+  let emailError = form.querySelector('.email-error');
+  if (!emailError && emailInput) {
+    emailError = document.createElement('div');
+    emailError.className = 'email-error error';
+    emailInput.insertAdjacentElement('afterend', emailError);
+  }
+  let messageError = form.querySelector('.message-error');
+  if (!messageError && messageInput) {
+    messageError = document.createElement('div');
+    messageError.className = 'message-error error';
+    messageInput.insertAdjacentElement('afterend', messageError);
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    let valid = true;
+
+    // Email: дозволяємо порожній або валідний email
+    if (emailInput) {
+      const email = emailInput.value.trim();
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        emailError.textContent = "Тут має бути саме email, а не щось інше…";
+        emailError.style.display = "block";
+        valid = false;
+      } else {
+        emailError.textContent = "";
+        emailError.style.display = "none";
+      }
+    }
+
+    // Message: обов'язкове поле
+    if (messageInput) {
+      const message = messageInput.value.trim();
+      if (!message) {
+        messageError.textContent = "Порожнє повідомлення відправити не можна…";
+        messageError.style.display = "block";
+        valid = false;
+      } else {
+        messageError.textContent = "";
+        messageError.style.display = "none";
+      }
+    }
+
+    if (!valid) return;
+
+    // Якщо все валідно — відправляємо
     const data = {
-      email: form.email.value.trim(),
-      message: form.message.value.trim(),
+      email: emailInput ? emailInput.value.trim() : "",
+      message: messageInput ? messageInput.value.trim() : "",
     };
     try {
       await submitFeedback(data);
@@ -64,9 +113,23 @@ function initFormLogic() {
       form.reset();
       closeFeedback();
     } catch (err) {
-      alert(err.message || 'Не вдалося надіслати. Спробуйте пізніше.');
+      alert(err.message || 'Не вдалося надіслати. Спробуйте пізніше');
     }
   });
+
+  // При зміні полів ховаємо помилки
+  if (emailInput) {
+    emailInput.addEventListener('input', () => {
+      emailError.textContent = "";
+      emailError.style.display = "none";
+    });
+  }
+  if (messageInput) {
+    messageInput.addEventListener('input', () => {
+      messageError.textContent = "";
+      messageError.style.display = "none";
+    });
+  }
 }
 
 // Публічна ініціалізація: привʼязати кнопку
