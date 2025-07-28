@@ -1,6 +1,6 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNGGsN6_-w0SvHCQIHzHWEuEOUhVxu3bQ0Zd2zmv5x3wjUVrm5jJfwR-_kG-XPhYKV/exec"; // URL веб‑застосунку Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzc9R9UgQmTA5iOo6Q5s8ULfBDgX0Y7e4kBQteuMS0xKltjtISUxBkFYfpev4tj3l-V/exec"; // URL веб‑застосунку Apps Script
 const FEEDBACK_PATH = './ui/feedback.html'; // шлях до HTML форми (змінюй при потребі)
 
 // Довантаження HTML форми (одноразово)
@@ -31,10 +31,12 @@ function closeFeedback() {
 
 // Сабміт форми: simple request без pre‑flight CORS
 async function submitFeedback(data) {
+  // "Simple request": без headers → браузер не робить pre‑flight, CORS не чіпляється
+  const body = new URLSearchParams(data); // email=a&message=b
+
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'text/plain' }, // simple request → без pre‑flight
-    body: JSON.stringify(data),
+    body,            // application/x-www-form-urlencoded
   });
   if (!res.ok) throw new Error('Помилка при надсиланні');
 }
