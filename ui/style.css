@@ -162,6 +162,10 @@ button {
   font-size: 15px;
   cursor: pointer;
   transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex: row;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Кнопки для вибору дня тижня */
@@ -205,8 +209,8 @@ button {
 }
 
 .main-button:hover {
-  background: #F2EB3C;
-  color: #1A244D;
+  background: #0022CC;
+  color: #fff;
 }
 
 /* Інпути */
@@ -259,8 +263,9 @@ textarea::placeholder {
 }
 
 .warning {
+  margin: 0px;
   font-size: 13px;
-  color: #D40000;
+  color: #FA5E5E;
 }
 
 /* Попоапи */
