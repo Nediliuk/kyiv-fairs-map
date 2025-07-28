@@ -165,7 +165,9 @@ button {
   display: flex;
   flex: row;
   align-items: center;
+  justify-content: center;
   gap: 8px;
+  height: 44px;
 }
 
 /* Кнопки для вибору дня тижня */
@@ -176,6 +178,7 @@ button {
   color: #1A244D;
   font-family: inherit;
   min-width: 180px;
+  justify-content: flex-start;
 }
 
 .weekday-button:hover:not(.active):not(.disabled),
@@ -262,10 +265,11 @@ textarea::placeholder {
   color: #1A244D70;
 }
 
-.warning {
+.error {
   margin: 0px;
   font-size: 13px;
   color: #FA5E5E;
+  display: none;
 }
 
 /* Попоапи */
@@ -384,15 +388,10 @@ textarea::placeholder {
   gap: 16px;
 }
 
-.feedback-form button[type="submit"] {
-  background-color: #0033FF;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.feedback-form button[type="submit"]:hover {
-  background-color: #0022CC;
+#feedback-toggle {
+  width: fit-content;
+  padding: 12px 22px;
+  border-radius: 12px;
+  height: 44px;
 }
 

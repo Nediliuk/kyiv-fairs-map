@@ -21,16 +21,16 @@
       <div class="input-group">
         <label for="email">Пошта</label>
         <input type="text" name="email" id="email" placeholder="Email (якщо хочете)">
-        <p class="warning">В цьому полі — або пошта, або нічого…</p>
+        <p class="email-error error">В цьому полі — або пошта, або нічого…</p>
       </div>
 
       <div class="input-group">
         <label for="message">Повідомлення</label>
-        <textarea name="message" id="message" rows="5" placeholder="Що покращити?" required></textarea>
-        <p class="warning">Порожнє повідомлення відправити не можна…</p>
+        <textarea name="message" id="message" rows="5" placeholder="Що покращити?" ></textarea>
+        <p class="message-error error">Порожнє повідомлення відправити не можна…</p>
       </div>
 
-      <button type="submit">Надіслати</button>
+      <button type="submit" id="submit-button" class="main-button">Надіслати</button>
     </form>
     </div>
   </div>
