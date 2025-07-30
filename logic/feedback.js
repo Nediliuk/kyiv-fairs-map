@@ -29,14 +29,14 @@ function closeFeedback() {
   if (wrapper) wrapper.style.display = 'none';
 }
 
-// Сабміт форми: simple request без pre‑flight CORS
+// Сабміт форми: JSON із заголовком → викликає pre‑flight CORS
 async function submitFeedback(data) {
-  // "Simple request": без headers → браузер не робить pre‑flight, CORS не чіпляється
-  const body = new URLSearchParams(data); // email=a&message=b
-
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
-    body,            // application/x-www-form-urlencoded
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error('Помилка при надсиланні');
 }
