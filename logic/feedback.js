@@ -1,6 +1,6 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyRHDgWNgRsd9CKEoUGR7PDHt0WHx8AJi7gGg5GhzJAqUjM2nrFjqdtKB7U7Z2KE0Hg/exec"; // URL веб‑застосунку Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8O6HEKlnO7WRg9r385a1ogYL97wFowqVlLdUqrcHriArPiQJ_fUjHfbxhBEv4_eD4/exec"; // URL веб‑застосунку Apps Script
 const FEEDBACK_PATH = './ui/feedback.html'; // шлях до HTML форми (змінюй при потребі)
 
 // Довантаження HTML форми (одноразово)
