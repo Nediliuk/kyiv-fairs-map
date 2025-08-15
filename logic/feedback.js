@@ -1,6 +1,6 @@
 // Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby8O6HEKlnO7WRg9r385a1ogYL97wFowqVlLdUqrcHriArPiQJ_fUjHfbxhBEv4_eD4/exec"; // URL веб‑застосунку Apps Script
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjZkN5l5nqxxRaWHFhlPrDM9WeTU-AVryw5XfV0TELjKu6tSz5TJJ8Wb7Gd5k7YA8A/exec"; // URL веб‑застосунку Apps Script
 const FEEDBACK_PATH = './ui/feedback.html'; // шлях до HTML форми (змінюй при потребі)
 
 // Довантаження HTML форми (одноразово)
@@ -29,19 +29,28 @@ function closeFeedback() {
   if (wrapper) wrapper.style.display = 'none';
 }
 
-// Сабміт форми: JSON із заголовком → викликає pre‑flight CORS
+// Сабміт форми: urlencoded без кастомних заголовків → НЕ викликає pre‑flight
 async function submitFeedback(data) {
+  const form = new URLSearchParams();
+  if (data.email)   form.set('email', data.email.trim());
+  if (data.message) form.set('message', data.message.trim());
+
   const res = await fetch(SCRIPT_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data),
+    body: form, // без headers, щоб запит був "simple"
   });
-  if (!res.ok) throw new Error('Помилка при надсиланні');
+
+  if (!res.ok) throw new Error(`Помилка при надсиланні (HTTP ${res.status})`);
+
+  // GAS повертає JSON {status:"ok"}
+  let payload = null;
+  try { payload = await res.json(); } catch (_) {}
+  if (payload && payload.status && payload.status !== 'ok') {
+    throw new Error(payload.message || 'Помилка при надсиланні');
+  }
 }
 
-// Логіка полів форми та сабміту
+// Логіка полів форми та сабміту + loading state на кнопці
 function initFormLogic() {
   const wrapper = document.getElementById('feedback-wrapper');
   const form    = document.getElementById('feedback-form');
@@ -56,11 +65,16 @@ function initFormLogic() {
 
   const emailInput   = form.querySelector('input[name="email"]');
   const messageInput = form.querySelector('textarea[name="message"]');
+  const submitBtn    = form.querySelector('[type="submit"]');
   const emailError   = form.querySelector('.email-error')   || createErrorBlock(emailInput,  'email-error');
   const messageError = form.querySelector('.message-error') || createErrorBlock(messageInput,'message-error');
 
+  let isSubmitting = false; // захист від повторних кліків без дизейблу кнопки
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+    if (isSubmitting) return; // ігноруємо повторний сабміт, кнопка залишається активною
+
     let valid = true;
 
     // Email: порожній або валідний
@@ -83,6 +97,10 @@ function initFormLogic() {
 
     if (!valid) return;
 
+    // Loading state на кнопці (без disable)
+    setLoading(submitBtn, true);
+    isSubmitting = true;
+
     try {
       await submitFeedback({
         email:   emailInput   ? emailInput.value.trim()   : '',
@@ -93,11 +111,28 @@ function initFormLogic() {
       closeFeedback();
     } catch (err) {
       alert(err.message || 'Не вдалося надіслати. Спробуйте пізніше');
+    } finally {
+      setLoading(submitBtn, false);
+      isSubmitting = false;
     }
   });
 
   emailInput?.addEventListener('input',   () => hideError(emailError));
   messageInput?.addEventListener('input', () => hideError(messageError));
+}
+
+function setLoading(btn, on) {
+  if (!btn) return;
+  if (on) {
+    if (!btn.dataset.originalText) btn.dataset.originalText = btn.textContent;
+    btn.classList.add('is-loading');           // можна стилізувати у CSS (spinner + opacity)
+    btn.setAttribute('aria-busy', 'true');     // a11y
+    btn.textContent = 'Надсилаємо…';
+  } else {
+    btn.classList.remove('is-loading');
+    btn.removeAttribute('aria-busy');
+    if (btn.dataset.originalText) btn.textContent = btn.dataset.originalText;
+  }
 }
 
 function createErrorBlock(afterEl, className) {
