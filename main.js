@@ -1,4 +1,3 @@
-// main.js (оновлена версія з кешуванням)
 import { map } from './data/init-map.js';
 import { loadFairSites } from './data/load-fair-sites.js';
 import { loadFairZones } from './data/load-fair-zones.js';
@@ -12,6 +11,10 @@ import {
 import { updateOffscreenIndicators } from './logic/offscreen-indicators.js';
 import { initMobilePopup } from './ui/mobile/mobile-popups.js';
 import { initFeedback } from './logic/feedback.js';
+import { VegetableLoader } from './logic/vegetable-loader.js';
+
+// Змінна для анімації овочів
+let vegetableLoader;
 
 // Виявлення мобільного екрана
 function updateIsMobile() {
@@ -20,17 +23,28 @@ function updateIsMobile() {
 updateIsMobile();
 window.addEventListener('resize', updateIsMobile);
 
-// Завантаження UI
+// Завантаження UI (десктоп / мобільний)
 async function loadUI() {
-  const uiPath = window.isMobile ? './ui/mobile/mobile-ui.html' : './ui/ui.html';
+  const uiPath = window.isMobile
+    ? './ui/mobile/mobile-ui.html'
+    : './ui/ui.html';
   const html = await fetch(uiPath).then((r) => r.text());
   const uiContainer = document.getElementById('ui-container');
   uiContainer.innerHTML = html;
 
   console.log('[UI loaded]');
+
   initMobilePopup();
   initFeedback();
+
+  // 🎬 ЗАПУСКАЄМО АНІМАЦІЮ ОВОЧІВ ОДРАЗУ ПІСЛЯ ЗАВАНТАЖЕННЯ UI!
+  console.log('🥕 Запускаємо лоадер з овочами...');
+  vegetableLoader = new VegetableLoader();
+  vegetableLoader.start();
+  console.log('✅ Лоадер запущений, поки карта завантажується');
 }
+
+// Спочатку завантажуємо UI і запускаємо лоадер
 loadUI();
 
 // Функція для завантаження свіжих даних з API і оновлення кешу
@@ -41,7 +55,6 @@ async function loadFreshData() {
     loadFairZones(),
   ]);
   
-  // Зберігаємо нові дані в кеш
   setCachedSites(sites);
   setCachedZones(zones);
   
@@ -54,25 +67,22 @@ async function updateDataInBackground(currentFairs) {
     console.log('🔍 Перевіряємо наявність оновлених даних...');
     const { sites, zones } = await loadFreshData();
     
-    // Порівнюємо нові дані з поточними
     const newFairs = assembleFairs({ sites, zones });
     
-    // Якщо дані змінились, можемо показати повідомлення користувачу
-    // (це опціонально - можна просто оновити мовчки)
     if (newFairs.length !== currentFairs.length) {
       console.log('✨ Знайдено оновлені дані про ярмарки');
-      // Тут можна додати ненав'язливе повідомлення користувачу
     }
     
   } catch (err) {
     console.warn('⚠️ Не вдалося оновити дані у фоні:', err);
-    // Це не критична помилка - користувач працює з кешованими даними
   }
 }
 
-// Основна ініціалізація карти з розумним кешуванням
+// Ініціалізація карти - тепер лоадер УЖЕ працює
 map.on('load', async () => {
   try {
+    // Лоадер УЖЕ працює з самого початку ✅
+
     let sites, zones, usingCache = false;
     
     // Спочатку перевіряємо кеш
@@ -80,13 +90,11 @@ map.on('load', async () => {
     const cachedZones = await getCachedZones();
     
     if (cachedSites && cachedZones) {
-      // Є кешовані дані - використовуємо їх для швидкого старту
       console.log('⚡ Використовуємо кешовані дані для швидкого завантаження');
       sites = cachedSites.data;
       zones = cachedZones.data;
       usingCache = true;
     } else {
-      // Кешу немає - завантажуємо з API та кешуємо
       console.log('📡 Завантажуємо дані з API (перший запуск або застарілий кеш)');
       const freshData = await loadFreshData();
       sites = freshData.sites;
@@ -103,19 +111,49 @@ map.on('load', async () => {
       enableMobileTogglePanel();
     }
     
-    // Додаємо слухач руху карти
+    // Додаємо слухач руху карти для оновлення індикаторів
     map.on('move', () => updateOffscreenIndicators(map, fairs));
+
+    // 🛑 ТЕПЕР ЗУПИНЯЄМО ЛОАДЕР І ПРИХОВУЄМО ЙОГО
+    console.log('🛑 Карта готова! Зупиняємо лоадер...');
+    
+    if (vegetableLoader) {
+      vegetableLoader.stop();
+      console.log('✅ Анімація овочів зупинена');
+    }
+    
+    const loader = document.getElementById('map-loader');
+    if (loader) {
+      loader.style.display = 'none';
+      console.log('✅ Лоадер приховано');
+    }
+    
+    document.body.classList.add('map-ready');
+    console.log('✅ Карта повністю завантажена та готова до роботи');
     
     // Якщо використовували кеш, запускаємо оновлення у фоні
     if (usingCache) {
-      // Даємо користувачу трохи часу попрацювати з картою, потім оновлюємо
       setTimeout(() => {
         updateDataInBackground(fairs);
-      }, 5000); // Оновлюємо через 5 секунд
+      }, 5000);
     }
     
   } catch (err) {
-    console.error('❌ Критична помилка при завантаженні:', err);
-    // Тут можна показати користувачу повідомлення про помилку
+    console.error('❌ Критична помилка при завантаженні карти:', err);
+    
+    // Зупиняємо анімацію навіть при помилці
+    if (vegetableLoader) {
+      vegetableLoader.stop();
+    }
+    
+    // Показуємо повідомлення про помилку
+    const loader = document.getElementById('map-loader');
+    if (loader) {
+      const loadingText = loader.querySelector('.loading-text');
+      if (loadingText) {
+        loadingText.textContent = 'Помилка завантаження. Спробуйте оновити сторінку.';
+        loadingText.style.color = '#FA5E5E';
+      }
+    }
   }
 });

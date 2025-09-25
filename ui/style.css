@@ -395,3 +395,97 @@ textarea::placeholder {
   height: 44px;
 }
 
+/* Чистий фінальний CSS для лоадера поверх карти */
+
+#map-loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: #F5F3E9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+.vegetable-animation {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vegetable {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(1) translateY(0);
+}
+
+/* Миттєва поява */
+.vegetable.active {
+  opacity: 1;
+}
+
+/* Плавне зникнення */
+.vegetable.leaving {
+  animation: leaveVegetable 0.2s ease-out forwards;
+}
+
+@keyframes leaveVegetable {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8) translateY(-10px);
+  }
+}
+
+.loading-text {
+  font-size: 16px;
+  color: #958D78;
+  font-weight: 300;
+  text-align: center;
+  animation: pulse 2.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Мобільна адаптація */
+@media (max-width: 768px) {
+  .vegetable {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .vegetable-animation {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .loading-text {
+    font-size: 14px;
+  }
+  
+  .loader-container {
+    gap: 24px;
+  }
+}
