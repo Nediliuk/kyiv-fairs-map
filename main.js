@@ -37,7 +37,7 @@ async function loadUI() {
   initMobilePopup();
   initFeedback();
 
-  // 🎬 ЗАПУСКАЄМО АНІМАЦІЮ ОВОЧІВ ОДРАЗУ ПІСЛЯ ЗАВАНТАЖЕННЯ UI!
+  // Запускаємо анімацію овочів одразу після завантаження UI
   console.log('🥕 Запускаємо лоадер з овочами...');
   vegetableLoader = new VegetableLoader();
   vegetableLoader.start();
@@ -78,11 +78,9 @@ async function updateDataInBackground(currentFairs) {
   }
 }
 
-// Ініціалізація карти - тепер лоадер УЖЕ працює
+// Ініціалізація карти
 map.on('load', async () => {
   try {
-    // Лоадер УЖЕ працює з самого початку ✅
-
     let sites, zones, usingCache = false;
     
     // Спочатку перевіряємо кеш
@@ -103,6 +101,126 @@ map.on('load', async () => {
     
     // Збираємо та рендеримо дані
     const fairs = assembleFairs({ sites, zones });
+
+    // 📊 ПОВНИЙ АНАЛІЗ ЗНАЧЕНЬ type_table, goods_type_kd і zone_type
+    console.log('📊 АНАЛІЗ ВСІХ ЗНАЧЕНЬ В ПОЛЯХ ЗОНИ:');
+
+    // Збираємо всі унікальні значення
+    const goodsTypeValues = new Set();
+    const zoneTypeValues = new Set();
+    const typeTableValues = new Set();
+    const combinedStats = new Map();
+
+    // Аналізуємо сирі дані zones
+    zones.forEach((rawZone, index) => {
+      const props = rawZone.attributes || rawZone.properties || {};
+      
+      // Збираємо type_table
+      if (props.type_table !== undefined && props.type_table !== null) {
+        typeTableValues.add(props.type_table);
+      }
+      
+      // Збираємо goods_type_kd
+      if (props.goods_type_kd !== undefined && props.goods_type_kd !== null) {
+        goodsTypeValues.add(props.goods_type_kd);
+      }
+      
+      // Збираємо zone_type
+      if (props.zone_type !== undefined && props.zone_type !== null) {
+        zoneTypeValues.add(props.zone_type);
+      }
+      
+      // Збираємо комбінації для аналізу
+      const combination = `zone_type:"${props.zone_type || 'null'}" + goods_type_kd:"${props.goods_type_kd || 'null'}" + type_table:"${props.type_table || 'null'}"`;
+      combinedStats.set(combination, (combinedStats.get(combination) || 0) + 1);
+      
+      // Показуємо перші 5 записів для розуміння структури
+      if (index < 5) {
+        console.log(`\n🔍 Запис ${index}:`);
+        console.log(`   type_table: "${props.type_table}" (${typeof props.type_table})`);
+        console.log(`   goods_type_kd: "${props.goods_type_kd}" (${typeof props.goods_type_kd})`);
+        console.log(`   zone_type: "${props.zone_type}" (${typeof props.zone_type})`);
+        console.log(`   Всі поля:`, Object.keys(props));
+      }
+    });
+
+    // Виводимо результати аналізу
+    console.log('\n🏷️ ТИП ТАБЛИЦІ type_table:');
+    console.log(`Загальна кількість: ${typeTableValues.size}`);
+    const sortedTypeTable = Array.from(typeTableValues).sort();
+    sortedTypeTable.forEach((value, index) => {
+      console.log(`   ${index + 1}. "${value}" (${typeof value})`);
+    });
+
+    console.log('\n🛒 ВСІ УНІКАЛЬНІ ЗНАЧЕННЯ goods_type_kd:');
+    console.log(`Загальна кількість: ${goodsTypeValues.size}`);
+    const sortedGoodsTypes = Array.from(goodsTypeValues).sort();
+    sortedGoodsTypes.forEach((value, index) => {
+      console.log(`   ${index + 1}. "${value}" (${typeof value})`);
+    });
+
+    console.log('\n🏪 ВСІ УНІКАЛЬНІ ЗНАЧЕННЯ zone_type:');
+    console.log(`Загальна кількість: ${zoneTypeValues.size}`);
+    const sortedZoneTypes = Array.from(zoneTypeValues).sort();
+    sortedZoneTypes.forEach((value, index) => {
+      console.log(`   ${index + 1}. "${value}" (${typeof value})`);
+    });
+
+    console.log('\n📈 СТАТИСТИКА КОМБІНАЦІЙ (zone_type + goods_type_kd + type_table):');
+    const sortedCombinations = Array.from(combinedStats.entries())
+      .sort((a, b) => b[1] - a[1]) // Сортуємо за кількістю
+      .slice(0, 15); // Показуємо топ-15
+
+    sortedCombinations.forEach(([combination, count]) => {
+      console.log(`   ${combination}: ${count} разів`);
+    });
+
+    console.log('\n📋 ЕКСПОРТ ДЛЯ КОДУ:');
+    console.log('// type_table values:');
+    console.log('const TYPE_TABLE_VALUES = [');
+    sortedTypeTable.forEach(value => {
+      console.log(`  "${value}",`);
+    });
+    console.log('];');
+
+    console.log('\n// goods_type_kd values:');
+    console.log('const GOODS_TYPES = [');
+    sortedGoodsTypes.forEach(value => {
+      console.log(`  "${value}",`);
+    });
+    console.log('];');
+
+    console.log('\n// zone_type values:');
+    console.log('const ZONE_TYPES = [');
+    sortedZoneTypes.forEach(value => {
+      console.log(`  "${value}",`);
+    });
+    console.log('];');
+
+    // Додатковий аналіз - чи є ще корисні поля?
+    console.log('\n🔍 ІНШІ КОРИСНІ ПОЛЯ В ДАНИХ ЗОНИ:');
+    const allFields = new Set();
+    zones.slice(0, 20).forEach(rawZone => {
+      const props = rawZone.attributes || rawZone.properties || {};
+      Object.keys(props).forEach(key => allFields.add(key));
+    });
+
+    const interestingFields = Array.from(allFields).filter(field => 
+      field.toLowerCase().includes('goods') || 
+      field.toLowerCase().includes('type') ||
+      field.toLowerCase().includes('category') ||
+      field.toLowerCase().includes('name') ||
+      field.toLowerCase().includes('descr') ||
+      field.toLowerCase().includes('table')
+    ).sort();
+
+    console.log('Потенційно корисні поля:');
+    interestingFields.forEach(field => console.log(`   - ${field}`));
+
+    console.log(`\nВсього полів в даних зони: ${allFields.size}`);
+    console.log('Всі поля:', Array.from(allFields).sort());
+
+    // Рендеримо шари карти
     renderLayers(map, fairs);
     
     // Налаштовуємо мобільний інтерфейс
@@ -114,7 +232,7 @@ map.on('load', async () => {
     // Додаємо слухач руху карти для оновлення індикаторів
     map.on('move', () => updateOffscreenIndicators(map, fairs));
 
-    // 🛑 ТЕПЕР ЗУПИНЯЄМО ЛОАДЕР І ПРИХОВУЄМО ЙОГО
+    // Зупиняємо лоадер і приховуємо його
     console.log('🛑 Карта готова! Зупиняємо лоадер...');
     
     if (vegetableLoader) {

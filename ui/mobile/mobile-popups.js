@@ -1,6 +1,8 @@
-// mobile-popup.js — логіка показу попапу на мобільних
+// ui/mobile/mobile-popups.js
+// Логіка показу попапів на мобільних пристроях
 
 import { getPopupContent } from '../popups.js';
+import { getZonePopupContent } from '../zone-popups.js';
 
 let popupContainer;
 
@@ -39,7 +41,36 @@ export function initMobilePopup() {
   });
 }
 
-// === Показ мобільного попапу ===
+// === Показ мобільного попапу для зони ===
+export function showMobileZonePopup(zone, fair) {
+  if (!popupContainer) {
+    console.warn('[zone-popup] popupContainer is not initialized');
+    return;
+  }
+
+  // Очистка контейнера перед вставкою нового вмісту
+  popupContainer.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'mobile-zone-popup-card';
+  card.innerHTML = `
+    <button class="mobile-popup-close">×</button>
+    ${getZonePopupContent(zone, fair)}
+  `;
+
+  popupContainer.appendChild(card);
+
+  // Додаємо клас visible на наступному кадрі
+  requestAnimationFrame(() => {
+    popupContainer.classList.add('visible');
+    console.log('[zone-popup] showMobileZonePopup displayed');
+  });
+
+  // Закриття по кнопці
+  card.querySelector('.mobile-popup-close')?.addEventListener('click', hideMobilePopup);
+}
+
+// === Показ мобільного попапу для ярмарку ===
 export function showMobilePopup(fair, nearest, uniqueWeekdays, lngLat) {
   if (!popupContainer) {
     console.warn('[popup] popupContainer is not initialized');
@@ -58,7 +89,7 @@ export function showMobilePopup(fair, nearest, uniqueWeekdays, lngLat) {
 
   popupContainer.appendChild(card);
 
-  // Додаємо клас visible на наступному кадрі, щоб уникнути скидання DOM
+  // Додаємо клас visible на наступному кадрі
   requestAnimationFrame(() => {
     popupContainer.classList.add('visible');
     console.log('[popup] showMobilePopup (via RAF)', popupContainer);
