@@ -1,5 +1,5 @@
 // ui/zone-popups.js
-// Створення попапів для зон торгівлі з реальними даними API
+// Створення попапів для зон торгівлі з оптимізованим пошуком
 
 import * as mapboxgl from 'https://cdn.skypack.dev/mapbox-gl';
 import { showMobileZonePopup } from './mobile/mobile-popups.js';
@@ -7,8 +7,35 @@ import { getZoneInfo, shouldShowPopup } from './zone-types-mapping.js';
 
 let activeZonePopup;
 
-// Основна функція для створення контенту попапу зони - МІНІМАЛЬНА ВЕРСІЯ
-export function getZonePopupContent(zone, fair) {
+// Кеш для швидкого пошуку зон за ключем "address:zoneType"
+let zoneCache = null;
+
+// Ініціалізація кешу для швидкого пошуку
+function initZoneCache(fairs) {
+  if (zoneCache) return; // Вже ініціалізовано
+  
+  zoneCache = new Map();
+  fairs.forEach(fair => {
+    fair.zones.forEach(zone => {
+      const key = `${fair.address}:${zone.zoneType}`;
+      zoneCache.set(key, { zone, fair });
+    });
+  });
+}
+
+// Швидкий пошук зони через кеш
+function findZone(address, zoneType, fairs) {
+  // Ініціалізуємо кеш при першому виклику
+  if (!zoneCache) {
+    initZoneCache(fairs);
+  }
+  
+  const key = `${address}:${zoneType}`;
+  return zoneCache.get(key);
+}
+
+// Основна функція для створення контенту попапу
+export function getZonePopupContent(zone) {
   const zoneInfo = getZoneInfo(zone.zoneType);
   
   return `
@@ -20,69 +47,60 @@ export function getZonePopupContent(zone, fair) {
   `;
 }
 
-// Створення попапу для зони на позиції клік/hover
+// Створення попапу для зони на позиції
 export function createZonePopupAt(map, fairs, feature, lngLat) {
   const address = feature.properties.address;
   const zoneType = feature.properties.zoneType;
   
-  // Перевіряємо мінімальний зум для показу попапів
-  if (map.getZoom() < 14.5) {
-    closeZonePopup();
-    return;
-  }
-  
-  // Перевіряємо чи потрібно показувати попап (не для інфраструктури)
+  // Перевіряємо чи потрібно показувати попап
   if (!shouldShowPopup(zoneType)) {
-    console.log(`Пропускаємо попап для інфраструктури: ${zoneType}`);
     return;
   }
   
-  // Знаходимо fair та зону
-  const fair = fairs?.find(f => f.address === address);
-  if (!fair) {
-    console.warn('Fair not found for zone:', address);
+  // Швидкий пошук через кеш замість двох find()
+  const result = findZone(address, zoneType, fairs);
+  if (!result) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Zone not found:', address, zoneType);
+    }
     return;
   }
   
-  const zone = fair.zones.find(z => z.zoneType === zoneType);
-  if (!zone) {
-    console.warn('Zone not found:', zoneType, 'in fair:', address);
-    return;
-  }
+  const { zone, fair } = result;
 
-  // Для мобільних пристроїв використовуємо окремий попап
+  // Для мобільних пристроїв
   if (window.isMobile) {
     showMobileZonePopup(zone, fair);
     return;
   }
 
-  // Якщо попап вже існує - просто оновлюємо його позицію та контент
+  // Оновлюємо існуючий попап замість створення нового
   if (activeZonePopup) {
     activeZonePopup
       .setLngLat(lngLat)
-      .setHTML(getZonePopupContent(zone, fair));
+      .setHTML(getZonePopupContent(zone));
   } else {
-    // Створюємо новий попап тільки якщо його ще немає
-    // ВАЖЛИВО: className додається до wrapper div, а не до .mapboxgl-popup
     activeZonePopup = new mapboxgl.Popup({
       offset: 16,
       closeButton: false,
       maxWidth: '180px',
-      className: 'zone-popup-wrapper' // Це додасть клас до wrapper
+      className: 'zone-popup-wrapper'
     })
       .setLngLat(lngLat)
-      .setHTML(getZonePopupContent(zone, fair))
+      .setHTML(getZonePopupContent(zone))
       .addTo(map);
   }
-
-  const zoneInfo = getZoneInfo(zoneType);
-  console.log(`Показано попап: ${zoneInfo.icon} ${zoneInfo.category} в ${address}`);
 }
 
-// Закриття активного попапу зони
+// Закриття активного попапу
 export function closeZonePopup() {
   if (activeZonePopup) {
     activeZonePopup.remove();
     activeZonePopup = null;
   }
+}
+
+// Скидання кешу (якщо потрібно перезавантажити дані)
+export function resetZoneCache() {
+  zoneCache = null;
 }

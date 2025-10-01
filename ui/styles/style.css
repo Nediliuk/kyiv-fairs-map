@@ -1,28 +1,28 @@
 /* Шрифти */
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('../fonts/e-Ukraine-Light.woff2') format('woff2');
+  src: url('/fonts/e-Ukraine-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: light;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('../fonts/e-Ukraine-Regular.woff2') format('woff2');
+  src: url('/fonts/e-Ukraine-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('../fonts/e-Ukraine-Medium.woff2') format('woff2');
+  src: url('/fonts/e-Ukraine-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: medium;
 }
 
 @font-face {
   font-family: 'e-Ukraine';
-  src: url('../fonts/e-UkraineHead-LOGO.woff2') format('woff2');
+  src: url('/fonts/e-UkraineHead-LOGO.woff2') format('woff2');
   font-weight: 600;
   font-style: bold;
 }
@@ -123,7 +123,7 @@ label {
   display: inline-block;
   width: 29px;
   height: 34px;
-  background-image: url('../media/icons/logo-icon.svg');
+  background-image: url('/media/icons/logo-icon.svg');
   background-size: contain;
   background-repeat: no-repeat;
   vertical-align: middle;
@@ -149,6 +149,7 @@ label {
   opacity: 100%;
   transform: translateY(0%);
   pointer-events: auto;
+  transition: all 0.2s ease;
 }
 
 /* Кнопки */
@@ -171,13 +172,16 @@ button {
 }
 
 /* Кнопки для вибору дня тижня */
+.weekday-today {
+  min-width: 180px;
+}
+
 .weekday-button,
 .weekday-today {
   text-align: left;
   background: none;
   color: #1A244D;
   font-family: inherit;
-  min-width: 180px;
   justify-content: flex-start;
 }
 
@@ -318,8 +322,8 @@ textarea::placeholder {
 .popup-details {
   font-weight: 300;
   font-size: 14px;
-  line-height: 180%;
-  color: #1A244D70;
+  line-height: 170%;
+  color: #686E8D;
 }
 
 .popup-date,
@@ -373,13 +377,19 @@ textarea::placeholder {
 }
 
 /* Модальне вікно фідбеку */
-#feedback-wrapper {
+.modal-overlay {
   position: fixed;
-  inset: 0;
-  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  opacity: 0;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -421,15 +431,7 @@ textarea::placeholder {
   gap: 16px;
 }
 
-#feedback-toggle {
-  width: fit-content;
-  padding: 12px 22px;
-  border-radius: 12px;
-  height: 44px;
-}
-
-/* Чистий фінальний CSS для лоадера поверх карти */
-
+/* CSS для лоадера поверх карти */
 #map-loader {
   position: fixed;
   top: 0;

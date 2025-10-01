@@ -8,14 +8,14 @@ import { createZonePopupAt, closeZonePopup } from './zone-popups.js';
 export function renderLayers(map, fairs) {
   // Перетворення fairs у flat-масив features для GeoJSON
   const features = [];
-  let featureId = 0; // Лічильник для унікальних ID
+  let featureId = 0;
 
   fairs.forEach(fair => {
     // Полігон ярмарку
     if (fair.polygon) {
       features.push({
         type: 'Feature',
-        id: featureId++, // Додаємо унікальний ID
+        id: featureId++,
         geometry: fair.polygon,
         properties: {
           type: 'polygon',
@@ -29,7 +29,7 @@ export function renderLayers(map, fairs) {
     if (fair.centroid) {
       features.push({
         type: 'Feature',
-        id: featureId++, // Додаємо унікальний ID
+        id: featureId++,
         geometry: {
           type: 'Point',
           coordinates: fair.centroid,
@@ -46,7 +46,7 @@ export function renderLayers(map, fairs) {
     fair.zones.forEach(zone => {
       features.push({
         type: 'Feature',
-        id: featureId++, // Додаємо унікальний ID
+        id: featureId++,
         geometry: zone.geometry,
         properties: {
           type: 'zone',
@@ -88,8 +88,8 @@ export function renderLayers(map, fairs) {
       'fill-extrusion-color': [
         'case',
         ['boolean', ['feature-state', 'hover'], false],
-        '#0022AA', // Темніший синій при ховері
-        '#0033FF'  // Звичайний синій
+        '#0022AA',
+        '#0033FF'
       ],
       'fill-extrusion-height': 2.3,
       'fill-extrusion-base': 0,
@@ -129,7 +129,7 @@ export function renderLayers(map, fairs) {
     if (loader) loader.style.display = 'none';
     document.body.classList.add('map-ready');
 
-    // === Попапи для ярмарків (залишаються на клік) ===
+    // === Попапи для ярмарків ===
     map.on('click', 'fair-points', (e) => {
       const feature = e.features[0];
       createPopupAt(map, fairs, feature, feature.geometry.coordinates);
@@ -140,98 +140,88 @@ export function renderLayers(map, fairs) {
       createPopupAt(map, fairs, feature, e.lngLat);
     });
 
-    // === Попапи для торгових зон: hover на десктопі, клік на мобільному ===
+    // === Попапи для торгових зон ===
     let hoveredZoneId = null;
+    const MIN_ZOOM = 14.5;
+
+    // Helper функція для оновлення hover state
+    const updateHoverState = (newFeatureId) => {
+      if (hoveredZoneId !== null && hoveredZoneId !== newFeatureId) {
+        map.setFeatureState(
+          { source: 'fairs', id: hoveredZoneId },
+          { hover: false }
+        );
+      }
+      if (newFeatureId != null) {
+        hoveredZoneId = newFeatureId;
+        map.setFeatureState(
+          { source: 'fairs', id: hoveredZoneId },
+          { hover: true }
+        );
+      }
+    };
+
+    // Helper функція для очищення hover state
+    const clearHoverState = () => {
+      if (hoveredZoneId !== null) {
+        map.setFeatureState(
+          { source: 'fairs', id: hoveredZoneId },
+          { hover: false }
+        );
+        hoveredZoneId = null;
+      }
+    };
 
     if (!window.isMobile) {
-      // Десктоп: показуємо попап по ховеру що слідує за курсором
+      // Десктоп: hover з слідуванням за курсором
+      
       map.on('mouseenter', 'zone-polygons', (e) => {
         const feature = e.features[0];
         
-        // Встановлюємо hover стан для темнішого кольору
-        if (feature.id !== undefined && feature.id !== null) {
-          // Очищаємо попередній hover перед встановленням нового
-          if (hoveredZoneId !== null && hoveredZoneId !== feature.id) {
-            map.setFeatureState(
-              { source: 'fairs', id: hoveredZoneId },
-              { hover: false }
-            );
-          }
-          hoveredZoneId = feature.id;
-          map.setFeatureState(
-            { source: 'fairs', id: hoveredZoneId },
-            { hover: true }
-          );
+        if (feature.id != null) {
+          updateHoverState(feature.id);
         }
         
-        // Перевіряємо мінімальний зум
-        if (map.getZoom() >= 14.5) {
+        if (map.getZoom() >= MIN_ZOOM) {
           createZonePopupAt(map, fairs, feature, e.lngLat);
         }
       });
 
-      // mousemove для слідування попапу за курсором
       map.on('mousemove', 'zone-polygons', (e) => {
-        // Перевіряємо мінімальний зум
-        if (map.getZoom() >= 14.5 && e.features.length > 0) {
-          const feature = e.features[0];
-          
-          // Оновлюємо hover state при переході між зонами
-          if (feature.id !== undefined && feature.id !== null && hoveredZoneId !== null && hoveredZoneId !== feature.id) {
-            try {
-              map.setFeatureState(
-                { source: 'fairs', id: hoveredZoneId },
-                { hover: false }
-              );
-            } catch (e) {
-              console.warn('Failed to clear previous hover state:', e);
-            }
-            // Встановлюємо новий hover
-            hoveredZoneId = feature.id;
-            map.setFeatureState(
-              { source: 'fairs', id: hoveredZoneId },
-              { hover: true }
-            );
-          }
-          
-          // Оновлюємо позицію та контент попапу
-          createZonePopupAt(map, fairs, feature, e.lngLat);
+        if (map.getZoom() < MIN_ZOOM || e.features.length === 0) return;
+        
+        const feature = e.features[0];
+        
+        // Оновлюємо hover state тільки при зміні зони
+        if (feature.id != null && hoveredZoneId !== feature.id) {
+          updateHoverState(feature.id);
         }
+        
+        // Оновлюємо позицію попапу
+        createZonePopupAt(map, fairs, feature, e.lngLat);
       });
 
       map.on('mouseleave', 'zone-polygons', () => {
-        // Прибираємо hover стан
-        if (hoveredZoneId !== null) {
-          try {
-            map.setFeatureState(
-              { source: 'fairs', id: hoveredZoneId },
-              { hover: false }
-            );
-          } catch (e) {
-            console.warn('Failed to clear hover state:', e);
-          }
-          hoveredZoneId = null;
-        }
-        
-        // Закриваємо попап коли прибираємо курсор
+        clearHoverState();
         closeZonePopup();
       });
 
-      // Закриваємо попап при зміні зуму нижче мінімального
+      // Закриваємо попап при зміні зуму
       map.on('zoom', () => {
-        if (map.getZoom() < 14.5) {
+        if (map.getZoom() < MIN_ZOOM) {
           closeZonePopup();
         }
       });
+      
     } else {
-      // Мобільний: залишаємо клік
+      // Мобільний: клік
       map.on('click', 'zone-polygons', (e) => {
         const feature = e.features[0];
         createZonePopupAt(map, fairs, feature, e.lngLat);
       });
     }
 
-    // === Курсори для hover ефектів ===
+    // === Курсори ===
     map.on('mouseenter', 'fair-points', () => {
       map.getCanvas().style.cursor = 'pointer';
     });

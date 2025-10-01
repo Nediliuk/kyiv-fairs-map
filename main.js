@@ -12,6 +12,7 @@ import { updateOffscreenIndicators } from './logic/offscreen-indicators.js';
 import { initMobilePopup } from './ui/mobile/mobile-popups.js';
 import { initFeedback } from './logic/feedback.js';
 import { VegetableLoader } from './logic/vegetable-loader.js';
+import { initAboutProject } from './logic/about-project.js'; // ← НОВИЙ ІМПОРТ
 
 // Змінна для анімації овочів
 let vegetableLoader;
@@ -36,6 +37,7 @@ async function loadUI() {
 
   initMobilePopup();
   initFeedback();
+  initAboutProject(); // ← ІНІЦІАЛІЗАЦІЯ МОДУЛЯ "ПРО ПРОЕКТ"
 
   // Запускаємо анімацію овочів одразу після завантаження UI
   console.log('🥕 Запускаємо лоадер з овочами...');
