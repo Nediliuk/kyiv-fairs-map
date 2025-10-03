@@ -1,6 +1,8 @@
 // logic/about-project.js
 // Модуль для показу інформації про проект
 
+import { openFeedback } from './feedback.js';
+
 const STORAGE_KEY = 'kyiv-fairs-first-visit';
 
 let aboutModal = null;
@@ -8,9 +10,9 @@ let aboutModal = null;
 // Створення HTML модального вікна
 function createAboutModal() {
   const modal = document.createElement('div');
-  modal.className = 'modal-overlay';
+  modal.className = 'about-modal-overlay';
   modal.innerHTML = `
-    <div class="about-modal">
+     <div class="about-modal">
       <button class="about-modal-close" aria-label="Закрити">×</button>
       
         <div class="about-modal-illustration">
@@ -52,13 +54,6 @@ function createAboutModal() {
   `;
 
   document.body.appendChild(modal);
-
-  // Динамічно вставляємо поточний рік
-  const yearSpan = modal.querySelector('#about-modal-year');
-  if (yearSpan) {
-    yearSpan.textContent = new Date().getFullYear();
-  }
-
   return modal;
 }
 
@@ -84,11 +79,10 @@ export function openAboutModal() {
       feedbackLink.addEventListener('click', (e) => {
         e.preventDefault();
         closeAboutModal();
-        // Відкриваємо форму фідбеку
-        const feedbackBtn = document.querySelector('.feedback-btn');
-        if (feedbackBtn) {
-          feedbackBtn.click();
-        }
+        // Відкриваємо форму фідбеку через імпортовану функцію
+        setTimeout(() => {
+          openFeedback();
+        }, 350); // чекаємо поки about модал закриється
       });
     }
 
