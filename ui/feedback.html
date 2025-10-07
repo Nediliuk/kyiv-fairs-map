@@ -1,39 +1,37 @@
-// === feedback.html ===
-// Модальне вікто із формою фідбеку
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Відгук про карту ярмарків</title>
-  <link rel="stylesheet" href="./ui/styles/style.css">
 </head>
 <body>
-    <div id="feedback-wrapper" class="modal-overlay">
-    <div id="feedback-container" class="modal-container floating">
-    <div class="form-title">
-      <h1>Допоможіть покращити єЯрмарок!</h1>
-      <p>Напишіть відгук анонімно, або залиште пошту для зворотного зв’язку</p>
-    </div>
+  <div id="feedback-wrapper" class="modal-overlay">
+    <div id="feedback-modal" class="modal-container">
+      <button class="modal-close" aria-label="Закрити">×</button>
+      
+      <div class="modal-body">
+        <h1>Допоможіть покращити єЯрмарок!</h1>
+        
+        <p class="body-1">Напишіть відгук анонімно, або залиште пошту для зворотного зв'язку</p>
 
-    <form id="feedback-form" class="feedback-form">
-      <div class="input-group">
-        <label for="email">Пошта</label>
-        <input type="text" name="email" id="email" placeholder="Email (якщо хочете)">
-        <p class="email-error error">В цьому полі — або пошта, або нічого…</p>
+        <form id="feedback-form" class="feedback-form">
+          <div class="input-group">
+            <label for="email">Пошта</label>
+            <input type="text" name="email" id="email" placeholder="Email (якщо хочете)">
+            <p class="email-error error">В цьому полі — або пошта, або нічого…</p>
+          </div>
+
+          <div class="input-group">
+            <label for="message">Повідомлення</label>
+            <textarea name="message" id="message" rows="5" placeholder="Що покращити?"></textarea>
+            <p class="message-error error">Порожнє повідомлення відправити не можна…</p>
+          </div>
+
+          <button type="submit" id="submit-button" class="main-button">Надіслати</button>
+        </form>
       </div>
-
-      <div class="input-group">
-        <label for="message">Повідомлення</label>
-        <textarea name="message" id="message" rows="5" placeholder="Що покращити?" ></textarea>
-        <p class="message-error error">Порожнє повідомлення відправити не можна…</p>
-      </div>
-
-      <button type="submit" id="submit-button" class="main-button">Надіслати</button>
-    </form>
     </div>
   </div>
-
 </body>
 </html>

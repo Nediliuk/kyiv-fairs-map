@@ -1,4 +1,5 @@
-// Робочий скрипт для фідбек‑форми: довантаження, відкриття/закриття, сабміт
+// logic/feedback.js
+// Модуль для форми зворотного зв'язку
 
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzqGU0mvA7G8di4aSs3vinL1Dbtluh_MENH-eQ-9ug7ievZLzP3Rdpbx-zEVjlfiuM7/exec";
 const FEEDBACK_PATH = './ui/feedback.html';
@@ -18,27 +19,27 @@ async function ensureFeedbackHtml() {
   return wrapper;
 }
 
-// Відкрити модалку - УНІФІКОВАНО з about-project
+// Відкрити модалку
 async function openFeedback() {
   const wrapper = await ensureFeedbackHtml();
-  wrapper.style.display = 'flex'; // показуємо wrapper
+  wrapper.style.display = 'flex';
   setTimeout(() => {
-    wrapper.classList.add('visible'); // додаємо анімацію
+    wrapper.classList.add('visible');
   }, 10);
 }
 
-// Закрити модалку - УНІФІКОВАНО з about-project
+// Закрити модалку
 function closeFeedback() {
   const wrapper = document.getElementById('feedback-wrapper');
   if (wrapper) {
     wrapper.classList.remove('visible');
     setTimeout(() => {
       wrapper.style.display = 'none';
-    }, 300); // чекаємо поки анімація закінчиться
+    }, 300);
   }
 }
 
-// Сабміт форми: urlencoded без кастомних заголовків → НЕ викликає pre‑flight
+// Сабміт форми
 async function submitFeedback(data) {
   const form = new URLSearchParams();
   if (data.email)   form.set('email', data.email.trim());
@@ -58,7 +59,7 @@ async function submitFeedback(data) {
   }
 }
 
-// Логіка полів форми та сабміту + loading state на кнопці
+// Логіка форми
 function initFormLogic() {
   const wrapper = document.getElementById('feedback-wrapper');
   const form    = document.getElementById('feedback-form');
@@ -69,7 +70,13 @@ function initFormLogic() {
     if (e.target === wrapper) closeFeedback();
   });
 
-  // Закриття по Escape - глобальний слухач
+  // Закриття по кліку на хрестик
+  const closeBtn = wrapper.querySelector('.modal-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeFeedback);
+  }
+
+  // Закриття по Escape
   const handleEscape = (e) => {
     if (e.key === 'Escape' && wrapper.classList.contains('visible')) {
       closeFeedback();
@@ -160,10 +167,10 @@ function createErrorBlock(afterEl, className) {
 function showError(el, msg) { if (el) { el.textContent = msg; el.style.display = 'block'; } }
 function hideError(el)      { if (el) { el.textContent = '';  el.style.display = 'none';  } }
 
-// Публічна ініціалізація: прив'язати кнопку
+// Публічна ініціалізація
 function initFeedback() {
   const toggle = document.getElementById('feedback-toggle');
   if (toggle) toggle.addEventListener('click', openFeedback);
 }
 
-export { initFeedback, openFeedback }; // експортуємо openFeedback для виклику з about-project
+export { initFeedback, openFeedback };

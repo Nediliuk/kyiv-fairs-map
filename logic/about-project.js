@@ -1,132 +1,101 @@
 // logic/about-project.js
-// Модуль для показу інформації про проект
+// Модуль для показу інформації про проект (рефакторинг - завантаження з HTML)
 
 import { openFeedback } from './feedback.js';
 
+const ABOUT_PATH = './ui/about-project.html';
 const STORAGE_KEY = 'kyiv-fairs-first-visit';
 
-let aboutModal = null;
+// Довантаження HTML (одноразово)
+async function ensureAboutHtml() {
+  let wrapper = document.getElementById('about-wrapper');
+  if (wrapper) return wrapper; // вже в DOM
 
-// Створення HTML модального вікна
-function createAboutModal() {
-  const modal = document.createElement('div');
-  modal.className = 'about-modal-overlay';
-  modal.innerHTML = `
-     <div class="about-modal">
-      <button class="about-modal-close" aria-label="Закрити">×</button>
-      
-        <div class="about-modal-illustration">
-          <img src="/media/images/fair-illustration.png" alt="Ілюстрація ярмарку" />
-        </div>
+  const html = await fetch(ABOUT_PATH).then(r => r.text());
+  const temp = document.createElement('div');
+  temp.innerHTML = html.trim();
+  wrapper = temp.querySelector('#about-wrapper') || temp.firstElementChild;
 
-        <div class="about-modal-body">
-          <h2>Що таке єЯрмарок?</h2>
-
-          <p class="about-modal-description">
-            Це карта Києва з фермерськими ярмарками які проходять щодня 
-            окрім понеділка в різних районах столиці.
-          </p>
-
-          <p class="about-modal-description">
-            Це неприбутковий, недержавний проект вихідного дня, 
-            написаний із допомогою штучного інтелекту.
-          </p>
-
-          <p class="about-modal-description">
-            Дані з офіційного <a href="https://data.gov.ua/dataset/6ba9c4e1-3dad-4423-b641-0b7d76720a55" target="_blank" rel="noopener noreferrer">API КМДА</a>.
-          </p>
-
-          <p class="about-modal-description">
-            Якщо маєте скарги чи пропозиції тисніть кнопку <a href="#" id="feedback-link">Відгук</a>.
-          </p>
-
-          <div class="about-modal-footer">
-            <p class="about-modal-credits">
-              Ідея і дизайн: <a href="https://www.instagram.com/nediliuk_official/" target="_blank" rel="noopener">@nediliuk_official</a>&nbsp;&nbsp;&nbsp;Ілюстрації: <a href="https://www.instagram.com/simka_shpin/" target="_blank" rel="noopener">@simka_shpin</a>
-            </p>
-            <p class="about-modal-copyright" id="about-modal-copyright">
-              Всі права захищено © Київ, <span id="about-modal-year"></span>
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-  return modal;
+  document.body.appendChild(wrapper);
+  initAboutLogic(); // слухачі після вставки
+  return wrapper;
 }
 
-// Відкриття модального вікна
-export function openAboutModal() {
-  if (!aboutModal) {
-    aboutModal = createAboutModal();
-    
-    // Закриття по кліку на overlay
-    aboutModal.addEventListener('click', (e) => {
-      if (e.target === aboutModal) {
-        closeAboutModal();
-      }
-    });
-
-    // Закриття по кліку на хрестик
-    const closeBtn = aboutModal.querySelector('.about-modal-close');
-    closeBtn.addEventListener('click', closeAboutModal);
-
-    // Обробник для посилання "Відгук"
-    const feedbackLink = aboutModal.querySelector('#feedback-link');
-    if (feedbackLink) {
-      feedbackLink.addEventListener('click', (e) => {
-        e.preventDefault();
-        closeAboutModal();
-        // Відкриваємо форму фідбеку через імпортовану функцію
-        setTimeout(() => {
-          openFeedback();
-        }, 350); // чекаємо поки about модал закриється
-      });
-    }
-
-    // Закриття по Escape
-    document.addEventListener('keydown', handleEscape);
-  }
-
-  // Показуємо модал
+// Відкрити модалку - УНІФІКОВАНО з feedback
+async function openAboutModal() {
+  const wrapper = await ensureAboutHtml();
+  wrapper.style.display = 'flex'; // показуємо wrapper
   setTimeout(() => {
-    aboutModal.classList.add('visible');
+    wrapper.classList.add('visible'); // додаємо анімацію
   }, 10);
 }
 
-// Закриття модального вікна
-export function closeAboutModal() {
-  if (aboutModal) {
-    aboutModal.classList.remove('visible');
-    
+// Закрити модалку - УНІФІКОВАНО з feedback
+function closeAboutModal() {
+  const wrapper = document.getElementById('about-wrapper');
+  if (wrapper) {
+    wrapper.classList.remove('visible');
     setTimeout(() => {
-      aboutModal.remove();
-      aboutModal = null;
-      document.removeEventListener('keydown', handleEscape);
-    }, 300);
+      wrapper.style.display = 'none';
+    }, 300); // чекаємо поки анімація закінчиться
   }
 }
 
-// Обробник клавіші Escape
-function handleEscape(e) {
-  if (e.key === 'Escape') {
-    closeAboutModal();
+// Логіка кнопок та посилань попапу
+function initAboutLogic() {
+  const wrapper = document.getElementById('about-wrapper');
+  if (!wrapper) return;
+
+  // Закриття по кліку на overlay
+  wrapper.addEventListener('click', (e) => {
+    if (e.target === wrapper) closeAboutModal();
+  });
+
+  // Закриття по кліку на хрестик
+  const closeBtn = wrapper.querySelector('.modal-close');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closeAboutModal);
+  }
+
+  // Обробник для посилання "Відгук"
+  const feedbackLink = wrapper.querySelector('#feedback-link');
+  if (feedbackLink) {
+    feedbackLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeAboutModal();
+      // Відкриваємо форму фідбеку з невеликою паузою
+      setTimeout(() => {
+        openFeedback();
+      }, 150);
+    });
+  }
+
+  // Закриття по Escape
+  const handleEscape = (e) => {
+    if (e.key === 'Escape' && wrapper.classList.contains('visible')) {
+      closeAboutModal();
+    }
+  };
+  document.addEventListener('keydown', handleEscape);
+
+  // Встановлюємо поточний рік
+  const yearSpan = wrapper.querySelector('#about-year');
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
   }
 }
 
 // Перевірка першого візиту
-export function isFirstVisit() {
+function isFirstVisit() {
   return !localStorage.getItem(STORAGE_KEY);
 }
 
 // Позначити що користувач вже був
-export function markAsVisited() {
+function markAsVisited() {
   localStorage.setItem(STORAGE_KEY, 'true');
 }
 
-// Ініціалізація: показати попап при першому візиті
+// Публічна ініціалізація
 export function initAboutProject() {
   // Чекаємо поки карта завантажиться
   const checkMapReady = setInterval(() => {
@@ -149,3 +118,5 @@ export function initAboutProject() {
     aboutBtn.addEventListener('click', openAboutModal);
   }
 }
+
+export { openAboutModal, closeAboutModal };
