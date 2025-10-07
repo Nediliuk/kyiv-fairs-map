@@ -21,7 +21,7 @@
 
 .logo-mark {
     width: 24px;
-    height: 24xpx;
+    height: 24px;
     background-size: contain;
     background-repeat: no-repeat;
 }
@@ -104,6 +104,55 @@
     pointer-events: none;
 }
 
+/* === КНОПКИ ДІЙ (справа) === */
+.action-buttons-mobile {
+  position: fixed;
+  right: 16px;
+  bottom: 40svh; /* динамічно над панеллю та донатом */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.action-buttons-mobile .action-btn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-buttons-mobile .btn-icon {
+  font-size: 20px;
+}
+
+/* === КНОПКА ДОНАТУ (зліва) === */
+.donate-btn-mobile {
+  position: fixed;
+  left: 16px;
+  bottom: calc(64px + 32px + 16px); /* над панеллю */
+  height: 48px;
+  width: auto;
+  padding: 0 20px;
+  z-index: 100;
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.donate-btn-mobile .btn-icon {
+  font-size: 20px;
+}
+
+.donate-btn-mobile .btn-text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
 /* Обгортка мобільного попапу */
 .mobile-popup {
   display: flex;
@@ -118,9 +167,7 @@
   transition: transform 0.15s ease-out, opacity 0.15s ease-out;
   opacity: 0;
   box-sizing: border-box;  
-
 }
-
 
 /* Сам попап */
 .mobile-popup-card {  
@@ -134,7 +181,6 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  
 }
 
 .mobile-popup.visible {
@@ -144,7 +190,6 @@
   height: auto;
   pointer-events: auto;
   transition: transform 0.15s ease-out, opacity 0.15s ease-out;
-
 }
 
 /* Кнопка закриття */
@@ -159,42 +204,4 @@
   cursor: pointer;
   font-weight: 300;
   display: none;
-}
-
-#feedback-toggle {
-    position: fixed;
-    bottom: 112px;
-    margin-left: 16px;
-    border-radius: 12px;
-}
-
-#feedback-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100svh;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    opacity: 0;
-    padding: 20px;
-    box-sizing: border-box;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-
-#feedback-container {
-    position: relative;
-    width: 100%;
-    height: fit-content;
-    border-radius: 12px;
-    padding: 16px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    margin: 0 16px;
 }
