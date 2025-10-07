@@ -112,10 +112,20 @@ export function initAboutProject() {
     }
   }, 100);
 
-  // Додаємо обробник для кнопки "Про проект"
+  // Додаємо обробник для кнопки "Про проект" (десктоп)
   const aboutBtn = document.getElementById('about-btn');
   if (aboutBtn) {
     aboutBtn.addEventListener('click', openAboutModal);
+  }
+
+  // Додаємо обробник для логотипу (мобільний)
+  if (window.isMobile) {
+    const mobileLogo = document.querySelector('#mobile-ui .logo-container');
+    if (mobileLogo) {
+      mobileLogo.addEventListener('click', openAboutModal);
+      // Додаємо клас для стилізації (щоб показати що клікабельний)
+      mobileLogo.classList.add('clickable');
+    }
   }
 }
 

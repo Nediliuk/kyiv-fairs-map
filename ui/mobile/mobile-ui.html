@@ -1,6 +1,11 @@
+<!-- Donation box (вгорі на карті) -->
+<div class="donation-box floating glass">
+  <p class="body-1">Якщо вам сподобався проект <a href="https://savelife.in.ua/donate/" target="_blank" rel="noopener">донатьте на Повернись живим 🇺🇦</a></p>
+</div>
+
 <div id="mobile-ui">
 
-  <div id="weekday-panel" class="weekday-panel floating">
+  <div id="weekday-panel" class="weekday-panel floating glass">
     <button class="weekday-today" data-day="today">Сьогодні</button>
 
     <button class="weekday-button" data-day="all">Усі дні</button>
@@ -27,25 +32,8 @@
 
 </div>
 
-<!-- Кнопки дій (справа) -->
-<div class="action-buttons-mobile">
-  <button id="about-btn" class="action-btn" title="Про проект">
-    <span class="btn-icon">ℹ️</span>
-  </button>
-  
-  <button id="feedback-toggle" class="action-btn" title="Відгук">
-    <span class="btn-icon">💬</span>
-  </button>
-</div>
-
-<!-- Кнопка донату (зліва) -->
-<a 
-  href="https://send.monobank.ua/jar/ВАША_БАНКА_ID" 
-  target="_blank"
-  id="donate-btn" 
-  class="action-btn donate-btn-mobile" 
-  title="Підтримати проект"
->
-  <span class="btn-icon">🇺🇦</span>
-  <span class="btn-text">Донат ЗСУ</span>
-</a>
+<!-- Кнопка відгуку (зліва внизу) -->
+<button id="feedback-toggle" class="feedback-btn" title="Відгук">
+  <span class="btn-text">Відгук</span>
+  <img src="./media/icons/icon-feedback.svg" alt="Іконка відгуку" class="icon" />
+</button>
