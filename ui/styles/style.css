@@ -49,25 +49,20 @@ button, input, select, textarea {
   font-family: inherit;
 }
 
-/* Посилання */
-a {
-  color: #0033FF;
-  text-decoration: none;
-}
-
-a:visited {
-  color: #0033FF;
-} 
-
-a:hover {
-  text-decoration: underline;
-}
-
 /* Glass ефект */
 .glass {
     backdrop-filter: blur(10px);
     background: rgba(255, 255, 255, 0.6);
     border: 1px solid #ffffffbd;
+}
+
+/* Посилання */
+a {
+  color: inherit;
+}
+
+a:visited {
+  color: inherit;
 }
 
 /* ============================================
@@ -90,14 +85,12 @@ h2 {
 
 .body-1 {
   font-size: 15px;
-  font-weight: 300;
   line-height: 1.5;
   margin: 0;
 }
 
 .body-2 {
   font-size: 13px;
-  font-weight: 300;
   line-height: 1.5;
   color: #686E8D;
   margin: 0;
@@ -232,10 +225,10 @@ h2 {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  width: fit-content; 
+  width: min-content; 
   max-width: calc(100vw - 48px); 
   border-radius: 12px;
-  padding: 16px 20px;
+  padding: 16px 32px;
   font-size: 14px;
   color: #1A244D;
   z-index: 10;
@@ -246,6 +239,16 @@ h2 {
 
 donation-box p{
   font-weight: 400;
+}
+
+.donation-box a {
+  color: #0033FF;
+  text-decoration: none;
+  transition: all 0.1s ease;
+}
+
+.donation-box a:hover {
+  text-decoration: underline 1.8px;
 }
 
 /* ============================================
@@ -326,7 +329,7 @@ donation-box p{
    КНОПКИ
    ============================================ */
 
-button {
+.button {
   background: #fff;
   color: #1A244D;
   border: none;
@@ -341,6 +344,8 @@ button {
   justify-content: center;
   gap: 8px;
   height: 44px;
+  box-sizing: border-box;
+  text-decoration: none;
 }
 
 /* Кнопки днів тижня */

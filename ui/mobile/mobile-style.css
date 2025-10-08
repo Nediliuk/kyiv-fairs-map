@@ -20,16 +20,11 @@ input[type="text"] {
 
 /* Посилання */
 a {
-  color: #0033FF;
-  text-decoration: none;
+  color: inherit;
 }
 
 a:visited {
-  color: #0033FF;
-} 
-
-a:hover {
-  text-decoration: underline;
+  color: inherit;
 }
 
 /* Glass ефект */
@@ -73,6 +68,12 @@ a:hover {
   box-sizing: border-box;
   text-align: center;
   pointer-events: auto;
+  font-weight: 400;
+}
+
+.donation-box a {
+  text-decoration: none;
+  color: #0033FF;
 }
 
 
@@ -204,6 +205,7 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 8px;
+  border: none;
 }
 
 .donate-btn .btn-icon {
@@ -229,6 +231,20 @@ a:hover {
 
 .about-footer {
     padding-top: 16px;
+}
+
+.modal-body a {
+    color: #0033FF;
+    text-decoration: none;
+}
+
+.about-illustration {
+    margin: 16px auto 0 auto;
+}
+
+.about-footer a {
+    color: #686E8D;
+    text-decoration: underline 1.4px;
 }
 
 /* ============================================
