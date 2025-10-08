@@ -120,7 +120,7 @@ export function initAboutProject() {
 
   // Додаємо обробник для логотипу (мобільний)
   if (window.isMobile) {
-    const mobileLogo = document.querySelector('#mobile-ui .logo-container');
+    const mobileLogo = document.querySelector('#mobile-ui .logo');
     if (mobileLogo) {
       mobileLogo.addEventListener('click', openAboutModal);
       // Додаємо клас для стилізації (щоб показати що клікабельний)

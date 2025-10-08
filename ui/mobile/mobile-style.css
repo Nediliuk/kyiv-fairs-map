@@ -1,9 +1,84 @@
-/* mobile-style.css */
+/* ============================================
+   MOBILE STYLE
+   ============================================ */
 
+/* ============================================
+   ГЛОБАЛЬНІ ФІКСИ
+   ============================================ */
 
+/* Fix для Safari (запобігає зуму при фокусі) */
 input[type="text"] {
   font-size: 16px;
+  min-height: 48px;
+  box-sizing: border-box;
 }
+
+
+/* ============================================
+   ГЛОБАЛЬНІ УТИЛІТИ
+   ============================================ */
+
+/* Посилання */
+a {
+  color: #0033FF;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #0033FF;
+} 
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Glass ефект */
+.glass {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #ffffffbd;
+}
+
+/* Індикатори поза екраном */
+.indicator {
+    pointer-events: none;
+}
+
+/* Іконки */
+.icon {
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+
+/* ============================================
+   DONATION BOX
+   ============================================ */
+
+.donation-box {
+  position: fixed;
+  top: 24px;
+  bottom: auto;
+  left: 50%;
+  transform: translateX(-50%);
+  width: fit-content; 
+  max-width: calc(100vw - 32px); 
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #1A244D;
+  z-index: 10;
+  box-sizing: border-box;
+  text-align: center;
+  pointer-events: auto;
+}
+
+
+/* ============================================
+   MOBILE UI (головний контейнер)
+   ============================================ */
 
 #mobile-ui {
     position: fixed;
@@ -19,18 +94,7 @@ input[type="text"] {
     pointer-events: none;
 }
 
-.logo {
-    font-size: 20px;
-    padding: 0 20px;
-}
-
-.logo-mark {
-    width: 24px;
-    height: 24px;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
+/* Контейнер кнопки вибору дня */
 #buttom-container {
     height: 64px;
     box-sizing: border-box;
@@ -40,11 +104,58 @@ input[type="text"] {
     z-index: 10;
 }
 
-.glass {
-    backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.6);
-    border: 1px solid #ffffffbd;
+/* Логотип */
+.logo {
+    font-size: 20px;
+    padding: 0 20px;
+    pointer-events: auto;
+    height: 100%;
 }
+
+.logo-mark {
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Кнопка вибору дня */
+.select-button {
+    background: #fff;
+    border-radius: 8px;
+    border: none;
+    padding: 12px 12px 12px 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 400;
+    color: #1A244D;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.select-button:active {
+    background: #F2F2F3;
+}
+
+#current-day .icon {
+    transition: transform 0.3s ease-out;
+    transform: rotate(0deg);
+}
+  
+#current-day.expanded .icon {
+    transform: rotate(180deg);
+}
+
+.main-button {
+   min-height: 48px;
+}
+
+/* ============================================
+   ПАНЕЛЬ ВИБОРУ ДНЯ ТИЖНЯ
+   ============================================ */
 
 .weekday-panel {
     flex-direction: column;
@@ -73,79 +184,18 @@ input[type="text"] {
     width: auto;       
 }
 
-.select-button {
-    background: #fff;
-    border-radius: 8px;
-    border: none;
-    padding: 12px 12px 12px 20px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 15px;
-    font-weight: 400;
-    color: #1A244D;
-    pointer-events: auto;
-    touch-action: none;
-}
 
-.select-button:active {
-    background: #F2F2F3;
-}
+/* ============================================
+   КНОПКА ВІДГУКУ
+   ============================================ */
 
-.icon {
-    width: 24px;
-    height: 24px;
-    background-size: contain;
-    background-repeat: no-repeat;
-}
-
-#current-day .icon {
-    transition: transform 0.3s ease-out;
-    transform: rotate(0deg);
-}
-  
-#current-day.expanded .icon {
-    transform: rotate(180deg);
-}
-  
-.indicator {
-    pointer-events: none;
-}
-
-/* === КНОПКИ ДІЙ (справа) === */
-.action-buttons-mobile {
-  position: fixed;
-  right: 16px;
-  bottom: 40svh; /* динамічно над панеллю та донатом */
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 100;
-  pointer-events: auto;
-}
-
-.action-btn {
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.action-buttons-mobile .btn-icon {
-  font-size: 20px;
-}
-
-/* === КНОПКА ДОНАТУ (зліва) === */
 .feedback-btn {
   position: fixed;
   background: #0033FF;
   color: white;
   border-radius: 12px;
   left: 16px;
-  bottom: calc(64px + 32px + 16px); /* над панеллю */
+  bottom: calc(64px + 32px + 16px);
   height: 48px;
   width: auto;
   padding: 0 20px;
@@ -165,7 +215,27 @@ input[type="text"] {
   font-weight: 500;
 }
 
-/* Обгортка мобільного попапу */
+/* ============================================
+   МОДАЛЬНІ ВІКНА
+   ============================================ */
+
+.modal-overlay {
+    padding: 8px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.about-footer {
+    padding-top: 16px;
+}
+
+/* ============================================
+   МОБІЛЬНІ ПОПАПИ
+   ============================================ */
+
+/* Обгортка попапу */
 .mobile-popup {
   display: flex;
   flex-direction: column;
@@ -181,7 +251,7 @@ input[type="text"] {
   box-sizing: border-box;  
 }
 
-/* Сам попап */
+/* Контент попапу */
 .mobile-popup-card {  
   width: 100%;  
   background: #fff;
@@ -195,6 +265,7 @@ input[type="text"] {
   gap: 8px;
 }
 
+/* Стан показу */
 .mobile-popup.visible {
   transform: translateY(0);
   opacity: 1;
@@ -216,21 +287,4 @@ input[type="text"] {
   cursor: pointer;
   font-weight: 300;
   display: none;
-}
-
-.donation-box {
-  position: fixed;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: fit-content; 
-  max-width: calc(100vw - 32px); 
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 14px;
-  color: #1A244D;
-  z-index: 10;
-  box-sizing: border-box;
-  text-align: center;
-  pointer-events: auto;
 }
