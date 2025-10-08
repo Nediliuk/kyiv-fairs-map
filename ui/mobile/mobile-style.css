@@ -54,7 +54,7 @@ a:visited {
 
 .donation-box {
   position: fixed;
-  top: 24px;
+  top: 16px;
   bottom: auto;
   left: 50%;
   transform: translateX(-50%);
