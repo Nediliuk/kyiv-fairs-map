@@ -41,7 +41,7 @@ export function getPopupContent(fair, nearest, uniqueWeekdays) {
     >
       ${fair.address}
     </a>
-    <div class="popup-details">
+    <div class="popup-details body-1">
       <div>Ярмарки проходять у ${formatWeekdaysList(uniqueWeekdays).toLowerCase()}</div>
       ${nearest
         ? `<div>Наступний — у ${weekdayPluralLocative[nearest.weekday.toLowerCase()] || nearest.weekday.toLowerCase()} ${formatDate(nearest.date)}</div>`
