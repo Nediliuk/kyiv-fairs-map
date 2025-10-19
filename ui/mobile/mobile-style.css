@@ -322,6 +322,7 @@ a:visited {
   pointer-events: none;
   transition: opacity 0.2s ease-out;
   border: #faf9c96d 1.3px solid;
+  will-change: transform, opacity;
 }
 
 .mobile-zone-preview .zone-popup-title {
