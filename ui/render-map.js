@@ -214,9 +214,9 @@ export function renderLayers(map, fairs) {
       });
       
     } else {
-      // Мобільний: автоматичний показ при зумі 19+
-      const MOBILE_AUTO_POPUP_ZOOM = 19;
-      const MAGNETIC_MARGIN = -16; // Попапи залишаються на 16px всередині екрану
+      // Мобільний: автоматичний показ при певному зумі
+      const MOBILE_AUTO_POPUP_ZOOM = 18.3;
+      const MAGNETIC_MARGIN = -16; // Попапи залишаються на відсвані від межі всередині екрану
       let currentVisibleZones = new Map();
       let popupSizeCache = new Map(); // Кешуємо розміри попапів для швидкості
       let isUpdating = false; // Запобігає множинним одночасним оновленням
@@ -234,7 +234,7 @@ export function renderLayers(map, fairs) {
         
         const zoom = map.getZoom();
         
-        // Ховаємо всі попапи на зумі < 19
+        // Ховаємо всі попапи на вище вказаному зумі 
         if (zoom < MOBILE_AUTO_POPUP_ZOOM) {
           if (currentVisibleZones.size > 0) {
             currentVisibleZones.forEach((popupEl) => {

@@ -321,6 +321,7 @@ a:visited {
   box-sizing: border-box;
   pointer-events: none;
   transition: opacity 0.2s ease-out;
+  background: #f8f6ebcd;
   border: #faf9c96d 1.3px solid;
   will-change: transform, opacity;
 }
