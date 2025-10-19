@@ -3,7 +3,7 @@
 
 import { setupWeekdayFilter } from '../logic/weekday-filter.js';
 import { createPopupAt } from './popups.js';
-import { createZonePopupAt, closeZonePopup } from './zone-popups.js';
+import { createZonePopupAt, closeZonePopup, getZonePopupContent } from './zone-popups.js';
 
 export function renderLayers(map, fairs) {
   // Перетворення fairs у flat-масив features для GeoJSON
@@ -214,11 +214,151 @@ export function renderLayers(map, fairs) {
       });
       
     } else {
-      // Мобільний: клік
-      map.on('click', 'zone-polygons', (e) => {
-        const feature = e.features[0];
-        createZonePopupAt(map, fairs, feature, e.lngLat);
-      });
+      // Мобільний: автоматичний показ при зумі 17+
+      const MOBILE_AUTO_POPUP_ZOOM = 19;
+      const MAGNETIC_MARGIN = -16; // Ще менше - попапи можуть виходити максимум на 20px
+      let currentVisibleZones = new Map();
+      
+      const showVisibleZonePreviews = () => {
+        const zoom = map.getZoom();
+        
+        // Ховаємо всі попапи на зумі < 17
+        if (zoom < MOBILE_AUTO_POPUP_ZOOM) {
+          if (currentVisibleZones.size > 0) {
+            currentVisibleZones.forEach((popupEl) => {
+              popupEl.remove();
+            });
+            currentVisibleZones.clear();
+          }
+          return;
+        }
+        
+        // Отримуємо всі видимі зони на екрані
+        const features = map.queryRenderedFeatures({ layers: ['zone-polygons'] });
+        const newVisibleZones = new Set();
+        const popupsToPosition = []; // Масив попапів для позиціонування
+        
+        // Розміри вікна (не canvas!) для розрахунку магніту
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+        
+        // Крок 1: Створюємо всі попапи
+        features.forEach(feature => {
+          const address = feature.properties.address;
+          const zoneType = feature.properties.zoneType;
+          const zoneId = `${address}:${zoneType}`;
+          
+          newVisibleZones.add(zoneId);
+          
+          // Знаходимо дані про ярмарок та зону
+          const fair = fairs.find(f => f.address === address);
+          if (!fair) return;
+          
+          const zone = fair.zones.find(z => z.zoneType === zoneType);
+          if (!zone || !zone.geometry) return;
+          
+          // Обчислюємо центроїд полігону зони
+          const coords = zone.geometry.coordinates[0];
+          let sumX = 0, sumY = 0;
+          coords.forEach(([lng, lat]) => {
+            sumX += lng;
+            sumY += lat;
+          });
+          const centroidLng = sumX / coords.length;
+          const centroidLat = sumY / coords.length;
+          
+          // Проектуємо центроїд на координати екрану
+          const projected = map.project([centroidLng, centroidLat]);
+          
+          // Створюємо або отримуємо попап
+          let popupEl = currentVisibleZones.get(zoneId);
+          
+          if (!popupEl) {
+            popupEl = document.createElement('div');
+            popupEl.className = 'mobile-zone-preview glass floating';
+            popupEl.innerHTML = getZonePopupContent(zone, fair);
+            popupEl.style.position = 'fixed';
+            // Ставимо в (0,0) з opacity 0 щоб виміряти розміри
+            popupEl.style.left = '0px';
+            popupEl.style.top = '0px';
+            popupEl.style.opacity = '0';
+            popupEl.style.visibility = 'visible'; // ВАЖЛИВО: visible щоб браузер відрендерив
+            document.body.appendChild(popupEl);
+            currentVisibleZones.set(zoneId, popupEl);
+          }
+          
+          popupsToPosition.push({
+            element: popupEl,
+            centerX: projected.x,
+            centerY: projected.y,
+            zoneId: zoneId
+          });
+        });
+        
+        // Крок 2: Позиціонуємо всі попапи після того як браузер їх відрендерив
+        requestAnimationFrame(() => {
+          popupsToPosition.forEach(({ element, centerX, centerY, zoneId }) => {
+            // Отримуємо розміри (тепер вони мають бути правильні!)
+            const rect = element.getBoundingClientRect();
+            const popupWidth = rect.width;
+            const popupHeight = rect.height;
+            
+            // Обчислюємо ідеальну позицію (центр попапу над центроїдом)
+            let idealLeft = centerX - (popupWidth / 2);
+            let idealTop = centerY - (popupHeight / 2);
+            
+            // Магніт: попап може виходити максимум на MAGNETIC_MARGIN за межі екрану
+            // Ліва межа: попап може виходити на MAGNETIC_MARGIN пікселів зліва
+            const minLeft = -MAGNETIC_MARGIN;
+            // Права межа: лівий край попапу може бути максимум тут щоб правий край виходив на MAGNETIC_MARGIN
+            const maxLeft = screenWidth - popupWidth + MAGNETIC_MARGIN;
+            // Верхня межа
+            const minTop = -MAGNETIC_MARGIN;
+            // Нижня межа
+            const maxTop = screenHeight - popupHeight + MAGNETIC_MARGIN;
+            
+            // Обмежуємо позицію в діапазоні
+            const finalLeft = Math.max(minLeft, Math.min(maxLeft, idealLeft));
+            const finalTop = Math.max(minTop, Math.min(maxTop, idealTop));
+            
+            // Перевіряємо чи попап взагалі видно
+            // Ховаємо тільки якщо попап ПОВНІСТЮ за межами екрану
+            const isCompletelyHidden = 
+              finalLeft + popupWidth < 0 ||     // повністю зліва
+              finalLeft > screenWidth ||        // повністю справа
+              finalTop + popupHeight < 0 ||     // повністю зверху
+              finalTop > screenHeight;          // повністю знизу
+            
+            if (isCompletelyHidden) {
+              element.remove();
+              currentVisibleZones.delete(zoneId);
+              return;
+            }
+            
+            // Позиціонуємо та показуємо попап
+            element.style.left = `${finalLeft}px`;
+            element.style.top = `${finalTop}px`;
+            element.style.opacity = '1';
+          });
+        });
+        
+        // Крок 3: Видаляємо попапи які більше не видимі
+        currentVisibleZones.forEach((popupEl, zoneId) => {
+          if (!newVisibleZones.has(zoneId)) {
+            popupEl.remove();
+            currentVisibleZones.delete(zoneId);
+          }
+        });
+      };
+      
+      // Показуємо попапи при зміні зуму
+      map.on('zoomend', showVisibleZonePreviews);
+      
+      // Оновлюємо попапи при русі карти
+      map.on('move', showVisibleZonePreviews);
+      
+      // Початковий показ після завантаження карти
+      map.once('idle', showVisibleZonePreviews);
     }
 
     // === Курсори ===
