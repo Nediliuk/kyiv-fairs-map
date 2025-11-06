@@ -1,7 +1,7 @@
 // === fair-assembly.js ===
 // Збирання сутностей "fair" на основі даних сайтів і зон
 
-import { calculateCentroid } from './geometry-utils.js';
+import { calculateCentroid, calculateZoneCentroid } from './geometry-utils.js';
 import { getWeekdayName } from './date-utils.js';
 
 export function assembleFairs({ sites, zones }) {
@@ -36,13 +36,19 @@ export function assembleFairs({ sites, zones }) {
     }
   });
 
-  // 2. Додаємо зони для кожної адреси
+  // 2. Додаємо зони для кожної адреси з ОДРАЗУ ОБЧИСЛЕНИМ ЦЕНТРОЇДОМ
   zones.forEach(zoneFeature => {
     const { address, zone_type } = zoneFeature.properties;
     if (address && fairsByAddress[address]) {
+      const coords = zoneFeature.geometry?.coordinates?.[0];
+      
+      // Обчислюємо центроїд один раз при завантаженні
+      const zoneCentroid = coords ? calculateZoneCentroid(coords) : null;
+      
       fairsByAddress[address].zones.push({
         geometry: zoneFeature.geometry,
         zoneType: zone_type,
+        centroid: zoneCentroid, // ДОДАЛИ ЦЕНТРОЇД
       });
     }
   });

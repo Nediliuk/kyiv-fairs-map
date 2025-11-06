@@ -216,25 +216,17 @@ export function renderLayers(map, fairs) {
     } else {
       // Мобільний: автоматичний показ при певному зумі
       const MOBILE_AUTO_POPUP_ZOOM = 18.3;
-      const MAGNETIC_MARGIN = -16; // Попапи залишаються на відсвані від межі всередині екрану
+      const MAGNETIC_MARGIN = -16;
       let currentVisibleZones = new Map();
-      let popupSizeCache = new Map(); // Кешуємо розміри попапів для швидкості
-      let isUpdating = false; // Запобігає множинним одночасним оновленням
-      
-      // Створюємо індекс для швидкого пошуку fairs (O(1) замість O(n))
-      const fairsByAddress = new Map();
-      fairs.forEach(fair => {
-        fairsByAddress.set(fair.address, fair);
-      });
+      let popupSizeCache = new Map();
+      let isUpdating = false;
       
       const showVisibleZonePreviews = () => {
-        // Якщо вже оновлюємо - пропускаємо
         if (isUpdating) return;
         isUpdating = true;
         
         const zoom = map.getZoom();
         
-        // Ховаємо всі попапи на вище вказаному зумі 
         if (zoom < MOBILE_AUTO_POPUP_ZOOM) {
           if (currentVisibleZones.size > 0) {
             currentVisibleZones.forEach((popupEl) => {
@@ -247,70 +239,61 @@ export function renderLayers(map, fairs) {
           return;
         }
         
-        // Отримуємо всі видимі зони
-        const features = map.queryRenderedFeatures({ layers: ['zone-polygons'] });
+        // Отримуємо bounds viewport
+        const bounds = map.getBounds();
         const newVisibleZones = new Set();
         const popupsToPosition = [];
         
-        // Розміри вікна
         const screenWidth = window.innerWidth;
         const screenHeight = window.innerHeight;
         
-        // Крок 1: Створюємо попапи (тільки нові)
-        features.forEach(feature => {
-          const address = feature.properties.address;
-          const zoneType = feature.properties.zoneType;
-          const zoneId = `${address}:${zoneType}`;
-          
-          newVisibleZones.add(zoneId);
-          
-          // Використовуємо індекс замість find() - швидше
-          const fair = fairsByAddress.get(address);
-          if (!fair) return;
-          
-          const zone = fair.zones.find(z => z.zoneType === zoneType);
-          if (!zone || !zone.geometry) return;
-          
-          // Обчислюємо центроїд (оптимізований цикл)
-          const coords = zone.geometry.coordinates[0];
-          let sumX = 0, sumY = 0;
-          const coordsLength = coords.length;
-          for (let i = 0; i < coordsLength; i++) {
-            sumX += coords[i][0];
-            sumY += coords[i][1];
-          }
-          const centroidLng = sumX / coordsLength;
-          const centroidLat = sumY / coordsLength;
-          
-          const projected = map.project([centroidLng, centroidLat]);
-          
-          // Створюємо попап тільки якщо його ще немає
-          let popupEl = currentVisibleZones.get(zoneId);
-          
-          if (!popupEl) {
-            popupEl = document.createElement('div');
-            popupEl.className = 'mobile-zone-preview glass floating';
-            popupEl.innerHTML = getZonePopupContent(zone, fair);
-            popupEl.style.position = 'fixed';
-            popupEl.style.left = '0';
-            popupEl.style.top = '0';
-            popupEl.style.opacity = '0';
-            document.body.appendChild(popupEl);
-            currentVisibleZones.set(zoneId, popupEl);
-          }
-          
-          popupsToPosition.push({
-            element: popupEl,
-            centerX: projected.x,
-            centerY: projected.y,
-            zoneId: zoneId
+        // Перебираємо всі зони з fairs
+        fairs.forEach(fair => {
+          fair.zones.forEach(zone => {
+            // ГОЛОВНА ОПТИМІЗАЦІЯ: використовуємо готовий центроїд
+            if (!zone.centroid) return;
+            
+            const centroidLng = zone.centroid[0];
+            const centroidLat = zone.centroid[1];
+            
+            // Перевіряємо чи центроїд у viewport
+            if (!bounds.contains([centroidLng, centroidLat])) {
+              return;
+            }
+            
+            const zoneId = `${fair.address}:${zone.zoneType}`;
+            newVisibleZones.add(zoneId);
+            
+            // Проектуємо ГОТОВИЙ центроїд на екран
+            const projected = map.project([centroidLng, centroidLat]);
+            
+            // Створюємо попап тільки якщо його ще немає
+            let popupEl = currentVisibleZones.get(zoneId);
+            
+            if (!popupEl) {
+              popupEl = document.createElement('div');
+              popupEl.className = 'mobile-zone-preview glass floating';
+              popupEl.innerHTML = getZonePopupContent(zone, fair);
+              popupEl.style.position = 'fixed';
+              popupEl.style.left = '0';
+              popupEl.style.top = '0';
+              popupEl.style.opacity = '0';
+              document.body.appendChild(popupEl);
+              currentVisibleZones.set(zoneId, popupEl);
+            }
+            
+            popupsToPosition.push({
+              element: popupEl,
+              centerX: projected.x,
+              centerY: projected.y,
+              zoneId: zoneId
+            });
           });
         });
         
-        // Крок 2: Позиціонуємо попапи (з GPU прискоренням)
+        // Крок 2: Позиціонуємо попапи
         requestAnimationFrame(() => {
           popupsToPosition.forEach(({ element, centerX, centerY, zoneId }) => {
-            // Використовуємо кеш для розмірів
             let popupWidth, popupHeight;
             
             if (popupSizeCache.has(zoneId)) {
@@ -321,11 +304,9 @@ export function renderLayers(map, fairs) {
               const rect = element.getBoundingClientRect();
               popupWidth = rect.width;
               popupHeight = rect.height;
-              // Кешуємо розміри для наступних разів
               popupSizeCache.set(zoneId, { width: popupWidth, height: popupHeight });
             }
             
-            // Обчислюємо позицію
             const idealLeft = centerX - (popupWidth / 2);
             const idealTop = centerY - (popupHeight / 2);
             
@@ -337,7 +318,6 @@ export function renderLayers(map, fairs) {
             const finalLeft = Math.max(minLeft, Math.min(maxLeft, idealLeft));
             const finalTop = Math.max(minTop, Math.min(maxTop, idealTop));
             
-            // Перевіряємо видимість
             const isCompletelyHidden = 
               finalLeft + popupWidth < 0 ||
               finalLeft > screenWidth ||
@@ -351,7 +331,6 @@ export function renderLayers(map, fairs) {
               return;
             }
             
-            // Використовуємо transform для GPU прискорення
             element.style.transform = `translate(${finalLeft}px, ${finalTop}px)`;
             element.style.opacity = '1';
           });
@@ -369,7 +348,7 @@ export function renderLayers(map, fairs) {
         });
       };
       
-      // Throttle для move події (оновлюємо максимум кожні 100ms)
+      // Throttle для move події
       let moveTimeout;
       const throttledUpdate = () => {
         if (moveTimeout) return;
@@ -379,13 +358,8 @@ export function renderLayers(map, fairs) {
         }, 10);
       };
       
-      // Показуємо при зміні зуму
       map.on('zoomend', showVisibleZonePreviews);
-      
-      // Throttled оновлення при русі
       map.on('move', throttledUpdate);
-      
-      // Початковий показ
       map.once('idle', showVisibleZonePreviews);
     }
 
