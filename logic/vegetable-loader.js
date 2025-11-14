@@ -7,20 +7,16 @@ export class VegetableLoader {
     this.currentIndex = 0;
     this.isRunning = false;
     this.interval = null;
-    
-    console.log(`🥕 Знайдено ${this.vegetables.length} зображень овочів`);
   }
 
   start() {
     if (this.isRunning || this.vegetables.length === 0) return;
-    
+
     this.isRunning = true;
-    console.log('🎬 Запускаємо анімацію овочів');
-    
+
     // Вибираємо випадковий овоч для початку
     this.currentIndex = Math.floor(Math.random() * this.vegetables.length);
-    console.log(`🎲 Почнемо з випадкового овоча: ${this.vegetables[this.currentIndex].alt}`);
-    
+
     // Миттєво показуємо випадковий перший
     this.showVegetable(this.currentIndex);
     
@@ -64,9 +60,8 @@ export class VegetableLoader {
   }
 
   stop() {
-    console.log('🛑 Зупиняємо анімацію овочів');
     this.isRunning = false;
-    
+
     if (this.interval) {
       clearInterval(this.interval);
       this.interval = null;
