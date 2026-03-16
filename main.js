@@ -24,12 +24,9 @@ function updateIsMobile() {
 updateIsMobile();
 window.addEventListener('resize', updateIsMobile);
 
-// Завантаження UI (десктоп / мобільний)
+// Завантаження UI
 async function loadUI() {
-  const uiPath = window.isMobile
-    ? './ui/mobile/mobile-ui.html'
-    : './ui/ui.html';
-  const html = await fetch(uiPath).then((r) => r.text());
+  const html = await fetch('./ui/ui.html').then((r) => r.text());
   const uiContainer = document.getElementById('ui-container');
   uiContainer.innerHTML = html;
 

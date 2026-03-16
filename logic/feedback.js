@@ -168,9 +168,11 @@ function showError(el, msg) { if (el) { el.textContent = msg; el.style.display =
 function hideError(el)      { if (el) { el.textContent = '';  el.style.display = 'none';  } }
 
 // Публічна ініціалізація
+// Використовуємо data-feedback-toggle щоб охопити обидві кнопки (desktop + mobile)
 function initFeedback() {
-  const toggle = document.getElementById('feedback-toggle');
-  if (toggle) toggle.addEventListener('click', openFeedback);
+  document.querySelectorAll('[data-feedback-toggle]').forEach(btn => {
+    btn.addEventListener('click', openFeedback);
+  });
 }
 
 export { initFeedback, openFeedback };

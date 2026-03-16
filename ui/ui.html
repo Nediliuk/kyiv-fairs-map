@@ -1,8 +1,9 @@
-<!-- Donation box (внизу на карті) -->
+<!-- Donation box -->
 <div class="donation-box floating glass">
-  <p class="body-1">Якщо вам сподобався проєкт — ви можете віддячити <a href="https://savelife.in.ua/donate/" target="_blank" rel="noopener">донатом «Повернись живим»</a></p>
+  <p class="body-1">Якщо вам сподобався проєкт — ви можете віддячити<br><a href="https://savelife.in.ua/donate/" target="_blank" rel="noopener">донатом «Повернись живим»</a></p>
 </div>
 
+<!-- DESKTOP: панель зліва зверху -->
 <div class="fair-ui">
   <div class="logo-container floating">
     <div class="logo">
@@ -24,34 +25,48 @@
       <button class="weekday-button button" data-day="Субота">Субота</button>
       <button class="weekday-button button" data-day="Неділя">Неділя</button>
     </div>
-
-      
   </div>
 
   <div class="weekday-panel floating">
-
-    <!-- Кнопка про проект -->
-    <button 
-      id="about-btn" 
-      class="weekday-button button"
-      title="Про проект"
-    >
+    <button id="about-btn" class="weekday-button button" title="Про проект">
       <span class="btn-text">Про проєкт</span>
     </button>
-
-    <!-- Кнопка відгуку -->
-    <button id="feedback-toggle" class="weekday-button button">Відгук
-        <img src="./media/icons/icon-feedback-dark.svg" alt="Іконка відгуку" class="icon">
+    <button class="weekday-button button" data-feedback-toggle>Відгук
+      <img src="./media/icons/icon-feedback-dark.svg" alt="Іконка відгуку" class="icon">
     </button>
-
-    <!-- Кнопка донату -->
-    <!-- <a
-      href="https://savelife.in.ua/donate/"
-      target="_blank" 
-      class="weekday-button button"
-      title="«Повернись живим»"
-    >
-      <span class="btn-text">Донат 🇺🇦</span>
-    </a> -->
   </div>
 </div>
+
+<!-- MOBILE: панель знизу -->
+<div id="mobile-ui">
+  <div id="weekday-panel" class="weekday-panel floating glass">
+    <button class="weekday-today button" data-day="today">Сьогодні</button>
+
+    <button class="weekday-button button" data-day="all">Усі дні</button>
+    <button class="weekday-button button" data-day="Понеділок">Понеділок</button>
+    <button class="weekday-button button" data-day="Вівторок">Вівторок</button>
+    <button class="weekday-button button" data-day="Середа">Середа</button>
+    <button class="weekday-button button" data-day="Четвер">Четвер</button>
+    <button class="weekday-button button" data-day="Пʼятниця">Пʼятниця</button>
+    <button class="weekday-button button" data-day="Субота">Субота</button>
+    <button class="weekday-button button" data-day="Неділя">Неділя</button>
+  </div>
+
+  <div class="logo-container floating" id="buttom-container">
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <div class="logo-text">єЯрмарок</div>
+    </div>
+
+    <button class="select-button" id="current-day">
+      <span class="day-label">Усі дні</span>
+      <img src="./media/icons/icon-chevron-up.svg" alt="" class="icon" />
+    </button>
+  </div>
+</div>
+
+<!-- MOBILE: кнопка відгуку (зліва внизу) -->
+<button class="feedback-btn" data-feedback-toggle title="Відгук">
+  <span class="body-1">Відгук</span>
+  <img src="./media/icons/icon-feedback.svg" alt="Іконка відгуку" class="icon" />
+</button>
